@@ -1,0 +1,58 @@
+{
+  "category": "红色文旅专区",
+  "desc": "东里村红色革命历史与侨乡爱国文化景点合集",
+  "spots": [
+    {
+      "id": "red_001",
+      "name": "永春辛亥革命纪念馆",
+      "local_name": "辛亥纪念馆",
+      "type": "red_culture",
+      "images": ["/assets/images/red_culture/xinhai.jpg"],
+      "map_image": "/assets/images/route_maps/xinhai_map.png",
+      "intro": "纪念馆依托郑氏宗祠修建，展示永春华侨与辛亥革命的深厚渊源，内设郑玉指展厅，纪念其追随孙中山革命的爱国事迹。东里村作为闽南侨乡，曾有30多位华侨参与同盟会革命。",
+      "story": "1906年，郑玉指加入中国同盟会槟榔屿分会，成为首批会员。他不仅捐资支持革命，还曾悉心照料孙中山家属，1912年获孙中山亲颁\"旌义状\"，表彰其为革命的卓越贡献。馆内收藏有同盟会会员名册、侨胞捐资凭证等珍贵史料。",
+      "audio_url": "/assets/audio/red_001.mp3",
+      "can_bookmark": true,
+      "location": "东里村郑氏宗祠内"
+    },
+    {
+      "id": "red_002",
+      "name": "旌义状石碑",
+      "local_name": "旌义状",
+      "type": "red_culture",
+      "images": ["/assets/images/red_culture/jingyizhuang.jpg"],
+      "map_image": "/assets/images/route_maps/jingyizhuang_map.png",
+      "intro": "石碑立于侨光亭内，碑文为孙中山1912年亲颁\"旌义状\"勒石，全国罕见，是东里华侨爱国情怀的历史见证。石碑高1.8米，宽0.8米，保存完好。",
+      "story": "1912年中华民国成立后，孙中山为表彰郑玉指\"宣扬大义，不遗余力\"的革命贡献，特授予\"优等义状\"。后东里村将碑文勒石立亭，1987年重修时增设防护设施，2015年被列入永春县文物保护点，让华侨爱国精神代代传承。",
+      "audio_url": "/assets/audio/red_002.mp3",
+      "can_bookmark": true,
+      "location": "东里村侨光亭内"
+    },
+    {
+      "id": "red_003",
+      "name": "古炮楼（瞭望塔）",
+      "local_name": "古炮楼",
+      "type": "red_culture",
+      "images": ["/assets/images/red_culture/guntou.jpg"],
+      "map_image": "/assets/images/route_maps/guntou_map.png",
+      "intro": "始建于明代，清末重建，抗日战争时期为瞭望哨，位于布兜山顶，可俯瞰全村，兼具抗倭、抗匪、抗战三重历史意义。石结构建筑，高12米，共3层。",
+      "story": "明嘉靖三十九年（1560年），倭寇窜入塔山隘烧杀抢掠，东里村民避居豆磨山并筑寨防御。清末古炮楼在此基础上修建，抗战时期成为重要瞭望点，守塔人以烟火为号，多次预警日军空袭。1945年曾成功引导村民躲避轰炸，保护了百余村民生命安全。",
+      "audio_url": "/assets/audio/red_003.mp3",
+      "can_bookmark": true,
+      "location": "东里村布兜山顶"
+    },
+    {
+      "id": "red_004",
+      "name": "洋杆尾古民居群",
+      "local_name": "洋杆尾古民居",
+      "type": "red_culture",
+      "images": ["/assets/images/red_culture/yangwei.jpg"],
+      "map_image": "/assets/images/route_maps/yangwei_map.png",
+      "intro": "保存完好的闽南传统民居群，含革命烈士郑拔桶故居，是华侨抗日、支援革命的历史见证。由36栋明清古厝组成，建筑面积约8000平方米。",
+      "story": "郑拔桶曾担任永春24连连长，带领队伍参与解放永春、南安的战斗，1949年在剿匪战斗中英勇牺牲。其故居至今保留着当年的革命物件、军用地图和书信手稿。抗战时期，这里是华侨秘密联络点，侨胞捐赠的物资在此集中后转运至前线，为革命胜利作出重要贡献。",
+      "audio_url": "/assets/audio/red_004.mp3",
+      "can_bookmark": true,
+      "location": "东里村东南部洋杆尾区域"
+    }
+  ]
+}

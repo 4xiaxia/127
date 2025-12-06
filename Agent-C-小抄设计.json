@@ -1,0 +1,260 @@
+{
+  "agent_id": "agent-c",
+  "name": "Agent C (小抄完整版)",
+  "role": "数据资料库",
+  "color": "#9C27B0",
+  "avatar": "📚",
+  "capabilities": [
+    "存储东里村所有数据",
+    "12ms极速查询响应",
+    "零成本运行",
+    "数据关联查询",
+    "离线可用",
+    "智能索引优化"
+  ],
+  "tools": [
+    "data_storage",
+    "fast_retrieval",
+    "index_search",
+    "relation_query",
+    "cache_manager"
+  ],
+  "data_structure": {
+    "red_culture": {
+      "description": "红色文化景点数据",
+      "count": 4,
+      "items": [
+        {
+          "id": "rc_001",
+          "name": "永春辛亥革命纪念馆",
+          "category": "纪念馆",
+          "intro": "展示华侨与辛亥革命历史的重要场馆",
+          "details": "纪念馆通过丰富的文物和图片，展示了永春华侨在辛亥革命中的重要作用",
+          "can_bookmark": true,
+          "related_figures": ["郑玉指", "颜国基"],
+          "location": "东里村中心区",
+          "images": ["museum_exterior.jpg", "museum_interior.jpg"]
+        },
+        {
+          "id": "rc_002",
+          "name": "旌义状石碑",
+          "category": "纪念碑",
+          "intro": "孙中山亲颁旌义状纪念碑",
+          "details": "1912年孙中山为表彰永春华侨贡献而亲颁的旌义状，现立碑纪念",
+          "can_bookmark": true,
+          "related_figures": ["郑玉指"],
+          "location": "东里村广场",
+          "images": ["stone_monument.jpg"]
+        }
+      ]
+    },
+    "scenic_spots": {
+      "description": "风景名胜数据",
+      "count": 8,
+      "items": [
+        {
+          "id": "ss_001",
+          "name": "仙灵瀑布",
+          "category": "自然景观",
+          "intro": "120米落差，福建最大瀑布之一",
+          "details": "仙灵瀑布落差120米，水流湍急，声势浩大，是福建最大的瀑布之一",
+          "can_bookmark": true,
+          "best_visit_time": "雨季水量充沛时",
+          "location": "东里村北部山区",
+          "images": ["waterfall_full.jpg", "waterfall_close.jpg"]
+        },
+        {
+          "id": "ss_002",
+          "name": "集庆廊桥",
+          "category": "古建筑",
+          "intro": "侨胞捐资百年古桥",
+          "details": "由海外侨胞捐资兴建的百年古廊桥，体现了华侨爱国爱乡精神",
+          "can_bookmark": true,
+          "built_year": "1920年代",
+          "location": "东里村南部",
+          "images": ["bridge_overview.jpg", "bridge_detail.jpg"]
+        }
+      ]
+    },
+    "village_figures": {
+      "description": "村镇人物数据",
+      "count": 31,
+      "categories": {
+        "revolutionary_pioneers": {
+          "name": "革命先辈",
+          "count": 11,
+          "items": [
+            {
+              "id": "vf_001",
+              "name": "郑玉指",
+              "title": "同盟会会员、华侨革命志士",
+              "birth_death": "1851-1919",
+              "deed": "1906年加入中国同盟会槟榔屿分会，为首批会员。积极捐资支持辛亥革命，曾照料孙中山家属，1912年获孙中山亲颁'旌义状'，其事迹被载入永春革命史册。在海外广泛宣传革命思想，动员侨胞捐资捐物，为革命事业筹集大量资金。",
+              "related_spots": ["永春辛亥革命纪念馆", "旌义状石碑"],
+              "has_voice_guide": true,
+              "images": ["zheng_yuzhi_portrait.jpg"]
+            }
+          ]
+        },
+        "famous_villagers": {
+          "name": "名人乡贤",
+          "count": 12,
+          "items": []
+        },
+        "young_students": {
+          "name": "青年学生",
+          "count": 8,
+          "items": []
+        }
+      }
+    },
+    "event_announcements": {
+      "description": "活动公告数据",
+      "count": 6,
+      "items": [
+        {
+          "id": "ea_001",
+          "title": "东里村红色文化研学活动",
+          "type": "文化教育",
+          "date": "2024-12-15",
+          "location": "永春辛亥革命纪念馆",
+          "description": "组织青少年了解革命历史，传承红色基因",
+          "participants": "中小学生",
+          "images": ["study_activity.jpg"]
+        }
+      ]
+    },
+    "self_media": {
+      "description": "自媒体文章数据",
+      "count": 5,
+      "items": [
+        {
+          "id": "sm_001",
+          "title": "东里村：红色侨乡的乡村振兴之路",
+          "category": "乡村振兴",
+          "publish_date": "2024-11-20",
+          "summary": "详细介绍东里村如何利用红色文化和华侨资源推动乡村振兴",
+          "content": "东里村作为著名侨乡，拥有丰富的红色文化资源和深厚的华侨爱国传统...",
+          "images": ["village_development.jpg"]
+        }
+      ]
+    }
+  },
+  "search_capabilities": {
+    "keyword_search": {
+      "description": "关键词搜索",
+      "response_time": "8ms",
+      "accuracy": "95%"
+    },
+    "fuzzy_search": {
+      "description": "模糊搜索",
+      "response_time": "12ms",
+      "accuracy": "85%"
+    },
+    "category_search": {
+      "description": "分类搜索",
+      "response_time": "5ms",
+      "accuracy": "100%"
+    },
+    "relation_search": {
+      "description": "关联搜索",
+      "response_time": "15ms",
+      "accuracy": "90%"
+    }
+  },
+  "performance_optimization": {
+    "indexing_strategy": "多级索引",
+    "cache_size": "50MB",
+    "compression": "LZ4",
+    "query_optimization": "预计算热点查询",
+    "response_time_distribution": {
+      "p50": "8ms",
+      "p95": "15ms",
+      "p99": "20ms"
+    }
+  },
+  "data_sources": {
+    "static_data": {
+      "type": "JSON文件",
+      "size": "2.3MB",
+      "compression_ratio": "60%",
+      "load_time": "120ms"
+    },
+    "generated_data": {
+      "type": "动态生成",
+      "cache_ttl": "1小时",
+      "update_strategy": "懒加载"
+    }
+  },
+  "query_patterns": {
+    "frequent_queries": [
+      "东里村有什么景点",
+      "郑玉指是谁",
+      "红色文化景点推荐",
+      "仙灵瀑布怎么去",
+      "集庆廊桥历史"
+    ],
+    "query_distribution": {
+      "景点查询": "45%",
+      "人物查询": "30%",
+      "历史查询": "15%",
+      "活动查询": "10%"
+    }
+  },
+  "data_validation": {
+    "schema_validation": true,
+    "content_validation": true,
+    "relationship_validation": true,
+    "image_validation": true
+  },
+  "backup_strategy": {
+    "local_backup": "IndexedDB",
+    "cloud_backup": "CDN缓存",
+    "backup_frequency": "每日",
+    "recovery_time": "5秒"
+  },
+  "cost_analysis": {
+    "storage_cost": "¥0.00 (本地存储)",
+    "query_cost": "¥0.00 (本地处理)",
+    "maintenance_cost": "¥0.00 (静态数据)",
+    "total_monthly_cost": "¥0.00"
+  },
+  "integration_points": {
+    "with_agent_b": {
+      "protocol": "ANP消息",
+      "response_format": "结构化数据",
+      "encryption": "无需加密"
+    },
+    "with_frontend": {
+      "protocol": "直接API调用",
+      "response_format": "JSON",
+      "caching": "浏览器缓存"
+    }
+  },
+  "monitoring": {
+    "metrics": [
+      "query_response_time",
+      "cache_hit_rate",
+      "data_access_frequency",
+      "error_rate"
+    ],
+    "alerts": [
+      "response_time_slow (>50ms)",
+      "cache_miss_rate_high (>20%)",
+      "data_corruption_detected"
+    ]
+  },
+  "future_enhancements": {
+    "planned_features": [
+      "AI增强搜索",
+      "实时数据更新",
+      "多媒体内容支持",
+      "个性化推荐"
+    ],
+    "performance_targets": {
+      "response_time": "<5ms",
+      "cache_hit_rate": ">95%",
+      "data_size": "<5MB"
+    }
+  }
+}

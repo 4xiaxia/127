@@ -1,0 +1,370 @@
+{
+  "agent_id": "agent-d",
+  "name": "Agent D (心监控升级版)",
+  "role": "系统监控中心",
+  "color": "#F44336",
+  "avatar": "👁",
+  "capabilities": [
+    "实时监控四个Agent状态",
+    "10秒倒计时防流失",
+    "成本精准控制",
+    "用户体验统计",
+    "系统健康检查",
+    "性能指标分析",
+    "异常告警通知"
+  ],
+  "tools": [
+    "system_monitor",
+    "cost_tracker",
+    "user_behavior_analyzer",
+    "performance_collector",
+    "alert_manager",
+    "countdown_timer"
+  ],
+  "monitoring_scope": {
+    "agent_a": {
+      "name": "Agent A (眼睛+耳朵)",
+      "metrics": [
+        "mode_status",
+        "input_detection_rate",
+        "mode_switch_time", 
+        "voice_accuracy", 
+        "user_inactivity_time"
+      ],
+      "health_checks": [
+        "pill_interaction_status",
+        "minimax_stt_availability",
+        "input_listening_active"
+      ]
+    },
+    "agent_b": {
+      "name": "Agent B (瞎子)",
+      "metrics": [
+        "query_response_time",
+        "ai_call_frequency", 
+        "cheat_sheet_hit_rate", 
+        "cost_accumulation", 
+        "answer_quality_score"
+      ],
+      "health_checks": [
+        "silicon_flow_api_status",
+        "minimax_tts_availability",
+        "direct_output_working"
+      ]
+    },
+    "agent_c": {
+      "name": "Agent C (小抄)",
+      "metrics": [
+        "query_response_time",
+        "cache_hit_rate", 
+        "data_access_frequency", 
+        "storage_usage", 
+        "error_rate"
+      ],
+      "health_checks": [
+        "data_integrity_status",
+        "index_health",
+        "backup_status"
+      ]
+    },
+    "system_overall": {
+      "name": "整体系统",
+      "metrics": [
+        "total_response_time",
+        "monthly_cost", 
+        "user_satisfaction", 
+        "system_availability", 
+        "active_users"
+      ]
+    }
+  },
+  "countdown_system": {
+    "feature": "10秒倒计时防流失",
+    "trigger_conditions": [
+      "用户进入欢迎页面",
+      "10秒内无任何输入",
+      "用户状态为发呆"
+    ],
+    "actions": [
+      "开始10秒倒计时",
+      "显示倒计时提示",
+      "倒计时结束自动跳转首页",
+      "记录用户行为数据"
+    ],
+    "config": {
+      "countdown_seconds": 10,
+      "warning_at_5_seconds": true,
+      "auto_redirect_target": "home_page",
+      "user_behavior_tracking": true
+    }
+  },
+  "cost_control": {
+    "monthly_budget": "¥250",
+    "daily_limit": "¥8.33",
+    "cost_breakdown": {
+      "ai_calls": "¥0.25/次",
+      "voice_synthesis": "¥0.15/次",
+      "speech_to_text": "¥0.10/次",
+      "cheat_sheet_queries": "¥0.00/次"
+    },
+    "alert_thresholds": {
+      "daily_warning": "80% (¥6.66)",
+      "daily_critical": "95% (¥7.91)",
+      "monthly_warning": "80% (¥200)",
+      "monthly_critical": "95% (¥237)"
+    },
+    "optimization_strategies": [
+      "小抄优先策略",
+      "AI调用频率控制",
+      "缓存优化",
+      "批量处理优化"
+    ]
+  },
+  "user_experience_monitoring": {
+    "interaction_patterns": [
+      "voice_vs_text_preference",
+      "query_types_distribution", 
+      "session_duration", 
+      "bounce_rate", 
+      "feature_usage"
+    ],
+    "satisfaction_metrics": [
+      "response_time_satisfaction", 
+      "answer_quality_rating", 
+      "interface_usability", 
+      "error_tolerance"
+    ],
+    "real_time_feedback": [
+      "page_load_time",
+      "input_response_latency",
+      "voice_recognition_success",
+      "navigation_smoothness"
+    ]
+  },
+  "performance_benchmarks": {
+    "response_time_targets": {
+      "text_query": "<200ms (小抄命中)",
+      "voice_query": "<1.5s (语音识别)",
+      "complex_query": "<4s (AI推理)",
+      "overall_response": "<5s"
+    },
+    "availability_targets": {
+      "system_uptime": ">99.8%",
+      "api_success_rate": ">99.5%",
+      "data_accuracy": "100%",
+      "user_error_rate": "<1%"
+    },
+    "cost_efficiency_targets": {
+      "cost_per_user": "<¥2.5/月",
+      "ai_call_optimization": ">80%小抄命中",
+      "cache_hit_rate": ">90%",
+      "monthly_savings": ">60%"
+    }
+  },
+  "alert_system": {
+    "alert_types": [
+      {
+        "name": "cost_limit_warning",
+        "severity": "warning",
+        "condition": "daily_cost > 80% budget",
+        "action": "send_notification"
+      },
+      {
+        "name": "response_time_slow",
+        "severity": "warning", 
+        "condition": "avg_response_time > 5s",
+        "action": "performance_analysis"
+      },
+      {
+        "name": "agent_health_critical",
+        "severity": "critical",
+        "condition": "any_agent_unavailable > 30s",
+        "action": "immediate_alert"
+      },
+      {
+        "name": "user_experience_degraded",
+        "severity": "warning",
+        "condition": "satisfaction_score < 85%",
+        "action": "ux_analysis"
+      }
+    ],
+    "notification_channels": [
+      {
+        "type": "webhook",
+        "endpoint": "https://api.day.app/p2CPtgzAMNGQCqQYEz86AV",
+        "format": "{{时间-日期}}-{{API服务商-型号-异常}}"
+      },
+      {
+        "type": "console",
+        "level": "error",
+        "format": "detailed_log"
+      }
+    ]
+  },
+  "data_collection": {
+    "user_behavior": {
+      "click_tracking": true,
+      "session_recording": false,
+      "input_patterns": true,
+      "feature_usage": true
+    },
+    "system_performance": {
+      "response_times": true,
+      "error_rates": true,
+      "api_calls": true,
+      "resource_usage": true
+    },
+    "business_metrics": {
+      "cost_tracking": true,
+      "user_satisfaction": true,
+      "feature_adoption": true,
+      "retention_rates": true
+    }
+  },
+  "reporting": {
+    "real_time_dashboard": {
+      "system_status": "实时状态面板",
+      "cost_tracker": "成本追踪器",
+      "user_activity": "用户活动监控",
+      "performance_metrics": "性能指标"
+    },
+    "daily_reports": {
+      "cost_summary": "每日成本总结",
+      "usage_statistics": "使用统计",
+      "performance_review": "性能回顾",
+      "user_feedback": "用户反馈"
+    },
+    "monthly_reports": {
+      "business_analysis": "业务分析",
+      "cost_optimization": "成本优化建议",
+      "system_health": "系统健康报告",
+      "improvement_plans": "改进计划"
+    }
+  },
+  "integration_capabilities": {
+    "with_agent_a": {
+      "monitoring": "模式切换监控",
+      "data": "输入类型统计",
+      "alerts": "输入检测异常"
+    },
+    "with_agent_b": {
+      "monitoring": "AI调用监控",
+      "data": "成本累计数据",
+      "alerts": "性能异常告警"
+    },
+    "with_agent_c": {
+      "monitoring": "数据访问监控",
+      "data": "查询性能统计",
+      "alerts": "数据完整性检查"
+    },
+    "with_frontend": {
+      "monitoring": "用户行为监控",
+      "data": "交互数据收集",
+      "alerts": "用户体验问题"
+    }
+  },
+  "technical_specifications": {
+    "monitoring_interval": "1秒",
+    "data_retention": "30天",
+    "backup_frequency": "每日",
+    "alert_latency": "<5秒",
+    "dashboard_refresh": "实时"
+  },
+  "privacy_and_security": {
+    "data_anonymization": true,
+    "user_consent": true,
+    "data_minimization": true,
+    "secure_storage": true
+  },
+    "health_dashboard": {
+      "panel_config": {
+        "title": "东里村Agent健康监控中心",
+        "refresh_interval": "5秒",
+        "auto_refresh": true,
+        "theme": "light"
+      },
+      "agent_health_cards": {
+        "agent_a": {
+          "display_name": "Agent A (眼睛)",
+          "metrics": ["response_time", "success_rate", "processing_count", "cpu_usage", "network_latency"],
+          "thresholds": {"response_time": 100, "success_rate": 95, "cpu_usage": 80}
+        },
+        "agent_b": {
+          "display_name": "Agent B (瞎子)", 
+          "metrics": ["response_time", "success_rate", "ai_calls", "mcp_searches", "cost_today"],
+          "thresholds": {"response_time": 5000, "success_rate": 90, "cost_budget": 10.00}
+        },
+        "agent_c": {
+          "display_name": "Agent C (小抄)",
+          "metrics": ["query_time", "hit_rate", "query_count", "memory_usage", "data_integrity"],
+          "thresholds": {"query_time": 50, "hit_rate": 70, "memory_usage": 90}
+        },
+        "agent_d": {
+          "display_name": "Agent D (心)",
+          "metrics": ["monitoring_latency", "coverage_rate", "monitoring_events", "cpu_usage", "alert_count"],
+          "thresholds": {"monitoring_latency": 100, "coverage_rate": 95, "cpu_usage": 70}
+        }
+      },
+      "system_overview": {
+        "metrics": ["overall_health", "daily_requests", "daily_cost", "user_satisfaction", "system_availability"],
+        "targets": {"overall_health": 90, "system_availability": 99, "user_satisfaction": 85}
+      },
+      "alert_log": {
+        "max_entries": 50,
+        "auto_scroll": true,
+        "filter_levels": ["critical", "high", "medium", "low"],
+        "timestamp_format": "HH:mm:ss"
+      }
+    },
+    "webhook_notification_system": {
+      "primary_webhook": {
+        "name": "Bark通知服务",
+        "url": "https://api.day.app/p2CPtgzAMNGQCqQYEz86AV",
+        "enabled": true,
+        "retry_count": 3,
+        "timeout": 5000,
+        "rate_limit": {"max_per_minute": 10, "max_per_hour": 100}
+      },
+      "backup_webhook": {
+        "name": "备用通知服务",
+        "url": "https://backup-webhook.example.com/alert",
+        "enabled": true,
+        "retry_count": 5,
+        "timeout": 10000,
+        "rate_limit": {"max_per_minute": 5, "max_per_hour": 50}
+      },
+      "alert_levels": {
+        "critical": {"color": "🔴", "webhook": true, "auto_escalation": 300},
+        "high": {"color": "🟠", "webhook": true, "auto_escalation": 900},
+        "medium": {"color": "🟡", "webhook": false, "auto_escalation": 0},
+        "low": {"color": "🔵", "webhook": false, "auto_escalation": 0}
+      },
+      "message_template": {
+        "title": "🚨 东里村Agent系统告警",
+        "body": "{agent_name} ({agent_id}) 出现{level}级告警\n\n📊 告警详情:\n- 类型: {alert_name}\n- 当前值: {current_value}\n- 阈值: {threshold}\n- 时间: {timestamp}\n\n🔧 建议:\n{recommendations}\n\n📱 监控面板: http://localhost:3000/health"
+      }
+    },
+    "auto_recovery_system": {
+      "agent_failure_recovery": {
+        "max_restart_attempts": 3,
+        "restart_interval": 30,
+        "fallback_modes": ["degraded_service", "basic_functionality", "offline_mode"]
+      },
+      "api_failure_recovery": {
+        "auto_switch_provider": true,
+        "backup_providers": ["zhipuai", "minimax"],
+        "graceful_degradation": true
+      },
+      "cost_control_recovery": {
+        "auto_enable_saving_mode": true,
+        "limit_non_essential_calls": true,
+        "increase_cache_usage": true
+      }
+    },
+    "future_enhancements": {
+      "ai_anomaly_detection": "AI异常检测",
+      "predictive_analytics": "预测分析",
+      "automated_optimization": "自动优化",
+      "advanced_visualization": "高级可视化"
+    }
+}

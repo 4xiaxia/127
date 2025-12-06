@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent智能协作平台 - 管理后台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .status-online {
+            color: #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-warning {
+            color: #f59e0b;
+        }
+        
+        .status-offline {
+            color: #ef4444;
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        .alert-item {
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 顶部导航 -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gray-900">🤖 Agent智能协作平台</h1>
+                    <span class="ml-3 px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">v1.0.0</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-600">管理员: <span id="currentUser">Admin</span></span>
+                    <button onclick="logout()" class="px-3 py-1 bg-red-500 text-white rounded-md text-sm hover:bg-red-600">退出</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 导航菜单 -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8 h-12 items-center">
+                <a href="#" class="nav-item text-blue-600 border-b-2 border-blue-600 font-medium">🏠 首页</a>
+                <a href="#agent-a" class="nav-item text-gray-600 hover:text-gray-900">👀 A哥</a>
+                <a href="#agent-b" class="nav-item text-gray-600 hover:text-gray-900">🧠 B哥</a>
+                <a href="#agent-c" class="nav-item text-gray-600 hover:text-gray-900">📚 C哥</a>
+                <a href="#agent-d" class="nav-item text-gray-600 hover:text-gray-900">❤️ D哥</a>
+                <a href="#monitoring" class="nav-item text-gray-600 hover:text-gray-900">📊 监控</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 总体状态概览 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">👀</span>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">A哥-输入管理器</dt>
+                            <dd class="text-lg font-medium text-gray-900">
+                                <span class="status-online">● 运行中</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">今日处理: 1,234</span>
+                        <span class="text-green-600">+12%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">🧠</span>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">B哥-查询处理器</dt>
+                            <dd class="text-lg font-medium text-gray-900">
+                                <span class="status-online">● 运行中</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">今日查询: 892</span>
+                        <span class="text-green-600">+8%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">📚</span>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">C哥-数据管理器</dt>
+                            <dd class="text-lg font-medium text-gray-900">
+                                <span class="status-online">● 运行中</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">缓存命中: 87.3%</span>
+                        <span class="text-green-600">+5%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl">❤️</span>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">D哥-用户监控器</dt>
+                            <dd class="text-lg font-medium text-gray-900">
+                                <span class="status-online">● 运行中</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-500">今日用户: 1,234</span>
+                        <span class="text-green-600">+15%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系统性能监控 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">🖥️ 系统资源</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">CPU使用率</span>
+                            <span class="font-medium">45%</span>
+                        </div>
+                        <div class="mt-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">内存使用</span>
+                            <span class="font-medium">2.1GB / 8GB</span>
+                        </div>
+                        <div class="mt-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 26%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">磁盘使用</span>
+                            <span class="font-medium">45GB / 100GB</span>
+                        </div>
+                        <div class="mt-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-yellow-600 h-2 rounded-full" style="width: 45%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">📊 实时流量</h3>
+                <canvas id="trafficChart" width="400" height="200"></canvas>
+            </div>
+
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">🚨 告警中心</h3>
+                <div class="space-y-3 max-h-48 overflow-y-auto">
+                    <div class="alert-item flex items-start p-3 bg-yellow-50 rounded-lg">
+                        <span class="text-yellow-600 mr-2">⚠️</span>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-yellow-800">API使用量警告</p>
+                            <p class="text-xs text-yellow-600">硅基流动API今日使用量已达80%</p>
+                            <p class="text-xs text-gray-500">10分钟前</p>
+                        </div>
+                    </div>
+                    <div class="alert-item flex items-start p-3 bg-blue-50 rounded-lg">
+                        <span class="text-blue-600 mr-2">ℹ️</span>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-blue-800">系统更新</p>
+                            <p class="text-xs text-blue-600">B哥查询处理器已更新至v1.3.0</p>
+                            <p class="text-xs text-gray-500">1小时前</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API配置管理 -->
+        <div class="card bg-white p-6 rounded-lg shadow mb-8">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">🔑 API配置中心</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-3">硅基流动</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">API Keys:</span>
+                            <span class="text-sm font-medium">3个</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">轮询模式:</span>
+                            <span class="text-sm font-medium">随机</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">今日使用:</span>
+                            <span class="text-sm font-medium">567/1000</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-600 h-2 rounded-full" style="width: 56.7%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-3">MiniMax</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">API Keys:</span>
+                            <span class="text-sm font-medium">1个</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">轮询模式:</span>
+                            <span class="text-sm font-medium">顺序</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">今日使用:</span>
+                            <span class="text-sm font-medium">234/500</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full" style="width: 46.8%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-900 mb-3">智谱AI</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">API Keys:</span>
+                            <span class="text-sm font-medium">1个</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">轮询模式:</span>
+                            <span class="text-sm font-medium">关闭</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">今日使用:</span>
+                            <span class="text-sm font-medium">45/100</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="bg-gray-200 rounded-full h-2">
+                                <div class="bg-yellow-600 h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 成本分析 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">💰 今日成本分析</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">AI查询成本</p>
+                            <p class="text-xs text-gray-500">28次查询 × ¥0.25</p>
+                        </div>
+                        <span class="text-lg font-bold text-gray-900">¥7.00</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">语音合成成本</p>
+                            <p class="text-xs text-gray-500">15次合成 × ¥0.15</p>
+                        </div>
+                        <span class="text-lg font-bold text-gray-900">¥2.25</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">搜索API成本</p>
+                            <p class="text-xs text-gray-500">50次搜索 × ¥0.03</p>
+                        </div>
+                        <span class="text-lg font-bold text-gray-900">¥1.50</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-blue-50 rounded border border-blue-200">
+                        <div>
+                            <p class="text-sm font-medium text-blue-900">今日总成本</p>
+                            <p class="text-xs text-blue-600">预算: ¥50.00</p>
+                        </div>
+                        <span class="text-lg font-bold text-blue-900">¥10.75</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">📈 性能趋势</h3>
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部信息 -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-sm text-gray-500">
+                    © 2024 Agent智能协作平台 - 基于ANP协议的多Agent协作系统
+                </div>
+                <div class="text-sm text-gray-500">
+                    运行时间: <span id="uptime">99.9%</span> | 
+                    最后更新: <span id="lastUpdate">2024-12-06 15:10</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 实时流量图表 - 限制初始数据点为10个
+        const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+        const trafficChart = new Chart(trafficCtx, {
+            type: 'line',
+            data: {
+                labels: ['15:20', '15:22', '15:24', '15:26', '15:28', '15:30', '15:32', '15:34', '15:36', '15:38'],
+                datasets: [{
+                    label: '请求数/分钟',
+                    data: [45, 52, 48, 58, 63, 55, 67, 50, 60, 55],
+                    borderColor: 'rgb(59, 130, 246)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    },
+                    x: {
+                        display: true
+                    }
+                }
+            }
+        });
+
+        // 性能趋势图表
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                datasets: [{
+                    label: '响应时间(ms)',
+                    data: [120, 115, 125, 110, 118, 130, 122],
+                    borderColor: 'rgb(16, 185, 129)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // 模拟实时数据更新
+        function updateRealtimeData() {
+            // 更新最后更新时间
+            document.getElementById('lastUpdate').textContent = 
+                new Date().toLocaleString('zh-CN');
+            
+            // 模拟新的流量数据
+            const newTraffic = Math.floor(Math.random() * 30) + 40;
+            
+            // 限制数据点数量为最多10个
+            const maxDataPoints = 10;
+            
+            if (trafficChart.data.datasets[0].data.length >= maxDataPoints) {
+                // 如果数据点已达到最大数量，移除第一个数据点
+                trafficChart.data.datasets[0].data.shift();
+                trafficChart.data.labels.shift();
+            }
+            
+            // 添加新数据点
+            trafficChart.data.datasets[0].data.push(newTraffic);
+            trafficChart.data.labels.push(
+                new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})
+            );
+            
+            // 无动画更新，提高性能
+            trafficChart.update('none');
+        }
+
+        // 每5秒更新一次数据
+        setInterval(updateRealtimeData, 5000);
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        });
+
+        // 模拟Agent状态变化
+        function simulateAgentStatus() {
+            const agents = ['A哥', 'B哥', 'C哥', 'D哥'];
+            const statuses = ['运行中', '运行中', '运行中']; // 99.9%时间都在运行
+            
+            // 随机选择一个Agent模拟状态更新（实际中很少变化）
+            if (Math.random() < 0.01) { // 1%概率有状态变化
+                const agentIndex = Math.floor(Math.random() * agents.length);
+                console.log(`${agents[agentIndex]} 状态检查: ${statuses[0]}`);
+            }
+        }
+
+        // 退出登录功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                // 清除登录状态
+                localStorage.removeItem('agentAdminLoggedIn');
+                localStorage.removeItem('agentAdminUser');
+                
+                // 跳转到登录页面
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // 检查登录状态
+        window.addEventListener('load', function() {
+            const isLoggedIn = localStorage.getItem('agentAdminLoggedIn');
+            const currentUser = localStorage.getItem('agentAdminUser');
+            
+            if (isLoggedIn !== 'true') {
+                // 未登录，跳转到登录页面
+                window.location.href = 'login.html';
+            } else {
+                // 显示当前用户
+                if (currentUser && document.getElementById('currentUser')) {
+                    document.getElementById('currentUser').textContent = currentUser;
+                }
+            }
+        });
+
+        setInterval(simulateAgentStatus, 10000);
+    </script>
+</body>
+</html>

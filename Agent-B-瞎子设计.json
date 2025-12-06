@@ -1,0 +1,206 @@
+{
+  "agent_id": "agent-b",
+  "name": "Agent B (瞎子升级版)",
+  "role": "智能答题器",
+  "color": "#FF9800",
+  "avatar": "✋",
+  "capabilities": [
+    "接收A的问题（眼睛/耳朵模式）",
+    "智能判断：小抄优先，AI按需",
+    "查询C的小抄数据（12ms响应）",
+    "调用AI模型回答复杂问题",
+    "生成最终答案（直接输出）",
+    "语音合成：Minimax TTS",
+    "成本控制：精准调用，零浪费"
+  ],
+  "tools": [
+    "intelligent_router",
+    "cheat_sheet_query",
+    "ai_model_caller",
+    "answer_generator",
+    "voice_synthesizer",
+    "cost_controller"
+  ],
+  "decision_tree": {
+    "first_check": "检查C的小抄数据",
+    "conditions": [
+      {
+        "if": "小抄有完整答案",
+        "then": "直接使用小抄，不调用AI",
+        "cost": "¥0.00",
+        "response_time": "200ms",
+        "data_source": "cheat_sheet_only"
+      },
+      {
+        "if": "小抄有部分数据",
+        "then": "小抄+AI补充",
+        "cost": "¥0.15",
+        "response_time": "2.5s",
+        "data_source": "cheat_sheet_plus_ai"
+      },
+      {
+        "if": "小抄无相关数据但主题相关",
+        "then": "MCP搜索兜底",
+        "cost": "¥0.29",
+        "response_time": "3.2s",
+        "data_source": "mcp_search_fallback"
+      },
+      {
+        "if": "小抄无相关数据且主题不相关",
+        "then": "纯AI回答",
+        "cost": "¥0.25",
+        "response_time": "4.0s",
+        "data_source": "ai_reasoning_only"
+      }
+    ]
+  },
+  "mcp_fallback_strategy": {
+    "trigger_condition": "C报告数据缺失但问题主题相关",
+    "c_mensaje": "哥们儿，咱们好像木有.....",
+    "b_response": "(lll￢ω￢)........好吧，调用mcp搜索工具，搜搜看，总比交白卷强",
+    "search_engines": ["baidu", "sogou", "bing"],
+    "cost_breakdown": {
+      "mcp_search": "¥0.03",
+      "ai_integration": "¥0.25",
+      "total": "¥0.28"
+    },
+    "frontend_notice": "📝 知识库暂无收录，以上回复根据搜索互联网的结果"
+  },
+  "message_handling": {
+    "eye_mode_input": {
+      "from": "EYES",
+      "type": "TEXT_INPUT",
+      "processing": "direct_text_analysis",
+      "features": ["零延迟", "本地处理", "无API调用"]
+    },
+    "ear_mode_input": {
+      "from": "EARS",
+      "type": "VOICE_INPUT",
+      "processing": "transcribed_text_analysis",
+      "features": ["94%准确率", "Minimax STT", "已转换文字"]
+    }
+  },
+  "cheat_sheet_integration": {
+    "query_types": [
+      "红色文化景点",
+      "风景名胜",
+      "村镇人物",
+      "活动公告",
+      "自媒体文章"
+    ],
+    "response_time": "12ms",
+    "success_rate": "100%",
+    "cost": "¥0.00"
+  },
+  "ai_config": {
+    "primary": {
+      "provider": "silicon_flow",
+      "model": "Qwen2.5-7B",
+      "api_key": "sk-xwmofaucrbykmzwwtbdwannjoxzxhssbwcfeafxykkdoouwe",
+      "endpoint": "https://api.siliconflow.cn/v1/chat/completions",
+      "cost_per_call": "¥0.25",
+      "response_time": "2.0s"
+    },
+    "backup": {
+      "provider": "zhipuai",
+      "model": "glm-4-flash",
+      "api_key": "a049afdafb1b41a0862cdc1d73d5d6eb.YuGYXVGRQEUILpog",
+      "endpoint": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+      "cost_per_call": "¥0.30",
+      "response_time": "2.5s"
+    }
+  },
+  "voice_synthesis": {
+    "provider": "minimax",
+    "model": "speech-01",
+    "api_key": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "endpoint": "https://api.minimax.chat/v1/audio/speech",
+    "cost_per_call": "¥0.15",
+    "voice_type": "female_gentle",
+    "response_time": "1.2s"
+  },
+  "answer_templates": {
+    "attraction_recommendation": {
+      "structure": "欢迎语 + 分类推荐 + 详细介绍 + 建议路线 + 导航提示",
+      "example": "🎉 欢迎来到东里村！我给您推荐几个必去的好地方~\n🏛️ **红色文化景点：**\n1. **永春辛亥革命纪念馆** - 了解华侨革命历史\n..."
+    },
+    "person_info": {
+      "structure": "身份介绍 + 生平时间 + 主要贡献 + 相关景点 + 语音讲解提示",
+      "example": "👨‍🎓 **郑玉指是东里村的重要革命先辈！**\n**详细介绍：**\n- 🎖️ **身份**：同盟会会员、华侨革命志士..."
+    },
+    "complex_planning": {
+      "structure": "现状分析 + 发展方向 + 具体建议 + 预期目标 + 深入分析邀请",
+      "example": "🚀 **东里村未来发展规划展望！**\n📊 **基于现有优势的发展方向：**\n🏛️ **1. 深化红色文旅融合**..."
+    }
+  },
+  "cost_optimization": {
+    "strategy": "小抄优先，AI按需",
+    "monthly_budget": "¥250",
+    "daily_limit": "¥8.33",
+    "cost_per_query_breakdown": {
+      "simple_cheat_sheet": "¥0.00",
+      "complex_with_ai": "¥0.25",
+      "voice_synthesis": "¥0.15"
+    }
+  },
+  "performance_metrics": {
+    "simple_query_response": "200ms (小抄命中)",
+    "complex_query_response": "4.0s (AI+小抄)",
+    "voice_answer_response": "5.2s (含语音合成)",
+    "accuracy_rate": "98%",
+    "user_satisfaction": "95%",
+    "cost_efficiency": "85%节省"
+  },
+  "error_handling": {
+    "ai_failure": "降级到小抄数据",
+    "cheat_sheet_failure": "降级到本地规则库",
+    "voice_synthesis_failure": "显示文字答案",
+    "network_failure": "离线模式，仅用小抄"
+  },
+  "direct_output_mode": {
+    "enabled": true,
+    "description": "B直接输出给用户，不通过A中转",
+    "benefits": [
+      "减少12.5%响应时间",
+      "降低消息传递复杂度",
+      "避免A的额外处理"
+    ]
+  },
+  "monitoring": {
+    "real_time_metrics": [
+      "query_response_time",
+      "ai_call_frequency",
+      "cheat_sheet_hit_rate",
+      "cost_accumulation"
+    ],
+    "alerts": [
+      "cost_limit_warning (80%)",
+      "ai_failure_rate (>5%)",
+      "response_time_slow (>5s)"
+    ]
+  },
+  "message_formats": {
+    "cheat_sheet_request": {
+      "from": "HANDS",
+      "to": "CHEAT_SHEET",
+      "type": "DATA_REQUEST",
+      "payload": {
+        "action": "get_data",
+        "query": "用户查询内容",
+        "category": "数据类型",
+        "limit": 10
+      }
+    },
+    "ai_reasoning_request": {
+      "from": "HANDS",
+      "to": "AI_MODEL",
+      "type": "AI_REASONING",
+      "payload": {
+        "provider": "silicon_flow",
+        "model": "Qwen2.5-7B",
+        "prompt": "用户问题内容",
+        "context": "相关背景信息"
+      }
+    }
+  }
+}

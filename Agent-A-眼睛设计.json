@@ -1,0 +1,332 @@
+{
+  "agent": {
+    "name": "Agent-A-眼睛",
+    "codeName": "AgentEyes",
+    "nickname": "探子",
+    "role": "眼睛和耳朵",
+    "version": "1.0.0",
+    "created": "2024-12-06",
+    "author": "实用主义团队"
+  },
+  "philosophy": {
+    "corePrinciple": "剃刀原则 + 第一性原理",
+    "mission": "只看不说，完美哑巴",
+    "style": "实用主义，简洁高效"
+  },
+  "responsibilities": {
+    "whatToDo": [
+      "👀 监听用户输入：看用户在手机上点哪里、输入什么",
+      "👂 收集题目信息：监听用户问什么问题、点什么功能",
+      "📋 记录考场情况：用户在哪个页面、看了什么内容",
+      "🗣 向B传递题目：把收集到的题目传给Agent B（瞎子）",
+      "🎤 语音转文字：A增加语音识别能力，把语音转成文字给B"
+    ],
+    "whatNotToDo": [
+      "❌ 不思考答案：A是哑巴眼睛，不是大脑，不负责思考",
+      "❌ 不调用外部API：那是B（瞎子）的事情",
+      "❌ 不存储数据：那是C（小抄）的事情",
+      "❌ 不记录作弊日志：那是D（心）的事情",
+      "❌ 不展示答案：那是B（瞎子）直接展示给用户",
+      "❌ 不说话：A是哑巴，只监听不输出"
+    ]
+  },
+  "capabilities": {
+    "input": [
+      {
+        "type": "text",
+        "method": "keyboard_input",
+        "description": "监听键盘输入，获取用户文字问题"
+      },
+      {
+        "type": "voice",
+        "method": "microphone_input", 
+        "description": "监听麦克风输入，获取用户语音问题"
+      },
+      {
+        "type": "click",
+        "method": "ui_interaction",
+        "description": "监听用户点击，记录页面行为"
+      }
+    ],
+    "processing": [
+{
+  "agent_id": "agent-a",
+  "name": "Agent A (眼睛+耳朵)",
+  "role": "双模式监听员",
+  "color": "#4CAF50",
+  "avatar": "👀👂",
+  "capabilities": [
+    "眼睛模式：监听文字输入",
+    "耳朵模式：监听语音输入",
+    "模式切换：50ms内完成",
+    "零判断逻辑：用户主动选择",
+    "鸡贼胶囊交互：前端控制",
+    "消息转发：直接给B处理"
+  ],
+  "tools": [
+    "text_input_listener",
+    "voice_input_listener",
+    "mode_switcher",
+    "pill_interaction_handler",
+    "minimax_stt_client",
+    "message_forwarder"
+  ],
+  "modes": {
+    "eye_mode": {
+      "name": "眼睛模式 👀",
+      "status": "专注文字监听",
+      "response_time": "50ms",
+      "cost": "¥0.00",
+      "api_calls": "无",
+      "features": [
+        "直接文字处理",
+        "零延迟响应",
+        "无外部API调用",
+        "本地实时监听"
+      ]
+    },
+    "ear_mode": {
+      "name": "耳朵模式 👂",
+      "status": "专注语音监听",
+      "response_time": "1.5s",
+      "cost": "¥0.10/次",
+      "api_calls": "Minimax STT",
+      "features": [
+        "Web Audio API录音",
+        "Minimax STT转换",
+        "94%准确率",
+        "声波动画反馈"
+      ]
+    },
+    "standby_mode": {
+      "name": "待机模式 🔋",
+      "status": "等待用户选择",
+      "response_time": "0ms",
+      "cost": "¥0.00",
+      "api_calls": "无",
+      "features": [
+        "零资源消耗",
+        "等待胶囊选择",
+        "模式就绪状态"
+      ]
+    }
+  },
+  "pill_interaction": {
+    "voice_pill": {
+      "icon": "🎤",
+      "color": "#667eea",
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "action": "switchToEarMode",
+      "animation": "bounce + scale"
+    },
+    "text_pill": {
+      "icon": "📝",
+      "color": "#11998e",
+      "gradient": "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
+      "action": "switchToEyeMode",
+      "animation": "bounce + scale"
+    }
+  },
+  "minimax_config": {
+    "stt_endpoint": "https://api.minimax.chat/v1/audio/speech",
+    "api_key": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "confidence_threshold": 0.9,
+    "auto_submit": true,
+    "visual_feedback": "wave_animation"
+  },
+  "message_formats": {
+    "eye_mode_message": {
+      "from": "EYES",
+      "to": "HANDS",
+      "type": "TEXT_INPUT",
+      "payload": {
+        "inputMode": "text_selected",
+        "content": "用户输入的文字内容",
+        "directProcessing": true,
+        "zeroDelay": true,
+        "timestamp": "2024-12-06 15:30:00"
+      }
+    },
+    "ear_mode_message": {
+      "from": "EARS",
+      "to": "HANDS", 
+      "type": "VOICE_INPUT",
+      "payload": {
+        "inputMode": "voice_selected",
+        "originalAudio": "audio_blob.wav",
+        "transcribedText": "语音转换的文字内容",
+        "confidence": 0.94,
+        "sttProvider": "minimax",
+        "timestamp": "2024-12-06 15:30:00"
+      }
+    },
+    "mode_switch_message": {
+      "from": "MODE_SWITCHER",
+      "to": "SYSTEM_MONITOR",
+      "type": "MODE_CHANGE",
+      "payload": {
+        "from": "standby",
+        "to": "eye_mode",
+        "trigger": "user_clicked_text_pill",
+        "switchTime": "50ms",
+        "status": "ready_for_text_input"
+      }
+    }
+  },
+  "performance_metrics": {
+    "mode_switch_time": "50ms",
+    "text_input_latency": "50ms",
+    "voice_processing_time": "1.5s",
+    "accuracy_rate": "100% (文字), 94% (语音)",
+    "cost_efficiency": "文字零成本，语音¥0.10/次",
+    "user_satisfaction": "预估95%"
+  },
+  "llm_config": null,
+  "cheat_mode": {
+    "enabled": true,
+    "strategy": "用户主动选择，零判断逻辑",
+    "benefits": [
+      "消除判断错误",
+      "零延迟文字输入",
+      "精准成本控制",
+      "极致用户体验"
+    ]
+  }
+}
+    ]
+  },
+  "messageFormat": {
+    "outgoing": {
+      "from": "EYES",
+      "to": "HANDS",
+      "type": "QUESTION_FOUND",
+      "example": {
+        "from": "EYES",
+        "to": "HANDS", 
+        "messageId": "eye_20241206_001",
+        "timestamp": 1703123456789,
+        "type": "QUESTION_FOUND",
+        "payload": {
+          "action": "user_asked",
+          "data": {
+            "question": "东里村有哪些红色景点？",
+            "userPage": "chat_page",
+            "userClicked": "red_culture_category",
+            "inputType": "text"
+          }
+        }
+      }
+    }
+  },
+  "aiModel": {
+    "primary": {
+      "name": "Minimax Speech-to-Text",
+      "type": "stt",
+      "provider": "minimax",
+      "model": "speech-01",
+      "usage": "voice_recognition",
+      "costLevel": "medium",
+      "performance": "high_real_time"
+    },
+    "fallback": {
+      "name": "Local Keyword Matching",
+      "type": "rule_based",
+      "provider": "local",
+      "description": "本地关键词匹配，无需外部API"
+    }
+  },
+  "technicalSpecs": {
+    "responseTime": "< 500ms",
+    "availability": "99.5%",
+    "monthlyCost": "¥80-150",
+    "dependencies": [
+      "Minimax STT API",
+      "Browser Web Speech API (fallback)"
+    ],
+    "techStack": [
+      "TypeScript",
+      "Web Audio API", 
+      "IndexedDB (cache)",
+      "Event Listeners"
+    ]
+  },
+  "interface": {
+    "uiComponents": [
+      {
+        "name": "InputListener",
+        "type": "background_service",
+        "description": "后台监听所有用户输入"
+      },
+      {
+        "name": "VoiceRecorder", 
+        "type": "voice_capture",
+        "description": "语音录制和识别"
+      }
+    ],
+    "apis": [
+      {
+        "name": "minimaxSpeechToText",
+        "method": "POST",
+        "endpoint": "https://api.minimax.chat/v1/audio/speech",
+        "description": "Minimax语音识别API"
+      }
+    ]
+  },
+  "performance": {
+    "targets": {
+      "responseTime": "500ms",
+      "successRate": "99.5%",
+      "errorRate": "< 0.5%",
+      "concurrentUsers": 100
+    },
+    "monitoring": {
+      "metrics": [
+        "input_recognition_rate",
+        "speech_to_text_accuracy", 
+        "message_delivery_success",
+        "response_latency"
+      ],
+      "alerts": [
+        "speech_recognition_failure",
+        "high_latency_warning",
+        "message_delivery_failure"
+      ]
+    }
+  },
+  "deployment": {
+    "environment": "browser",
+    "platform": "web",
+    "scaling": "stateless",
+    "persistence": "localStorage + IndexedDB",
+    "cdn": "jsdelivr",
+    "fallbackStrategy": "offline_keyword_matching"
+  },
+  "testing": {
+    "unitTests": [
+      "speech_to_text_conversion",
+      "intent_recognition_accuracy", 
+      "message_format_validation",
+      "error_handling"
+    ],
+    "integrationTests": [
+      "A_to_B_communication",
+      "voice_input_workflow",
+      "multi_language_support"
+    ],
+    "e2eTests": [
+      "complete_user_input_flow",
+      "voice_to_text_to_answer_pipeline"
+    ]
+  },
+  "ceremony": {
+    "motto": "👀 眼睛看清楚，哑巴不说话",
+    "symbol": "👀",
+    "color": "#4CAF50",
+    "ritual": "每次启动时，确认所有输入渠道正常工作",
+    "successCriteria": {
+      "功能完整性": "所有输入方式都能正常工作",
+      "性能达标": "响应时间<500ms",
+      "零错误": "消息传递100%成功"
+    }
+  }
+}

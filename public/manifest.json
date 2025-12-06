@@ -1,0 +1,21 @@
+{
+  "name": "公益扶贫乡村AI导览系统",
+  "short_name": "乡村AI导游",
+  "description": "智能语音导游，景点介绍，路线规划",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0fdf4",
+  "theme_color": "#f0fdf4",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png", 
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

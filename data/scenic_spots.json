@@ -1,0 +1,110 @@
+{
+  "category": "风景景点大全",
+  "desc": "东里村自然生态与传统民俗景观合集",
+  "spots": [
+    {
+      "id": "scenic_001",
+      "name": "仙灵瀑布",
+      "local_name": "仙灵瀑布",
+      "type": "natural",
+      "images": ["/assets/images/scenic/xianling.jpg"],
+      "map_image": "/assets/images/route_maps/xianling_map.png",
+      "intro": "垂直落差约120米，为福建省内落差最大的瀑布之一，中段有水帘古道，下临深潭，是自然探险与摄影胜地。瀑布周边森林覆盖率达90%，负氧离子含量高。",
+      "story": "传说古时有仙灵在此修炼，瀑布因此得名。雨季时水流奔腾而下，声如惊雷；旱季时银丝垂落，宛如仙境。瀑布下方深潭名为\"仙浴潭\"，水质清澈甘甜，是村民传统取水点。2020年修建观景栈道后，成为游客必打卡景点。",
+      "audio_url": "/assets/audio/scenic_001.mp3",
+      "can_bookmark": true,
+      "location": "东里村仙灵山深处"
+    },
+    {
+      "id": "scenic_002",
+      "name": "豆磨古寨",
+      "local_name": "豆磨古寨",
+      "type": "natural_historic",
+      "images": ["/assets/images/scenic/doumo.jpg"],
+      "map_image": "/assets/images/route_maps/doumo_map.png",
+      "intro": "明嘉靖年间抗倭遗址，位于豆磨山顶（海拔989米），可俯瞰全村梯田与山林，兼具历史价值与生态观赏价值。古寨现存石墙周长约300米，高2-3米。",
+      "story": "明嘉靖三十九年，倭寇侵扰永春，东里村民避居豆磨山并开山壁垒、平整山头为寨，凭借险要地势抵御倭寇，古寨遗址至今尚存石墙工事。山顶设有观景台，可观赏日出云海，秋季梯田金黄，景色壮观。",
+      "audio_url": "/assets/audio/scenic_002.mp3",
+      "can_bookmark": true,
+      "location": "东里村豆磨山顶"
+    },
+    {
+      "id": "scenic_003",
+      "name": "防癌功能农业基地",
+      "local_name": "功能农业基地",
+      "type": "agricultural",
+      "images": ["/assets/images/scenic/nongye.jpg"],
+      "map_image": "/assets/images/route_maps/nongye_map.png",
+      "intro": "依托福建农林大学郑金贵团队技术，种植13种防癌功能作物，包括高花色苷黑米、高β胡萝卜素甘薯等，是农业科普与采摘体验基地。基地面积约435亩，含示范园、采摘区、科普馆。",
+      "story": "在乡贤郑金贵（原福建农林大学校长）支持下，东里村建立防癌食品试验基地，将科研成果转化为特色农业。2019年获评\"福建省一村一品示范村（黑米）\"，2020年新增桑椹、黑豆等品种，开发农产品深加工产品，游客可体验采摘、加工全过程。",
+      "audio_url": "/assets/audio/scenic_003.mp3",
+      "can_bookmark": true,
+      "location": "东里村南部农业示范区"
+    },
+    {
+      "id": "scenic_004",
+      "name": "池头古民居群",
+      "local_name": "池头古民居",
+      "type": "folk",
+      "images": ["/assets/images/scenic/chitou.jpg"],
+      "map_image": "/assets/images/route_maps/chitou_map.png",
+      "intro": "依山而建的闽南传统民居群落，周边梯田环绕，四季景致不同，秋收时节宛如\"黄金海洋中的古村落\"。现存古厝28栋，多为明清时期建造。",
+      "story": "池头古民居多为砖石木结构，保留着\"一进三开间\"的传统格局，部分民居仍保留着老式农具与生活物件。古厝群中间有一条溪流穿过，溪边设有洗衣台、古桥，体现了闽南侨乡的生活智慧。2015年入选福建省传统村落保护名录。",
+      "audio_url": "/assets/audio/scenic_004.mp3",
+      "can_bookmark": true,
+      "location": "东里村西北部池头区域"
+    },
+    {
+      "id": "scenic_005",
+      "name": "集庆廊桥",
+      "local_name": "集庆桥",
+      "type": "historic",
+      "images": ["/assets/images/scenic/jiqing.jpg"],
+      "map_image": "/assets/images/route_maps/jiqing_map.png",
+      "intro": "始建于清末，由旅菲侨胞集资重修，后经旅星洲侨亲郑少华捐资22万元翻建，左侧建有金沙亭纪念其先严郑金沙先生。桥长38米，宽4.5米，为石木结构廊桥。",
+      "story": "集庆廊桥见证了东里村侨胞爱国爱乡的情怀，原桥因年久失修影响通行，1998年郑少华先生捐资重修，保留了原桥的建筑风格，新增防护设施。桥身雕刻有花鸟、人物图案，金沙亭内立有功德碑，记载侨胞捐资事迹。",
+      "audio_url": "/assets/audio/scenic_005.mp3",
+      "can_bookmark": true,
+      "location": "东里村中部溪流之上"
+    },
+    {
+      "id": "scenic_006",
+      "name": "昭灵宫",
+      "local_name": "镇口宫",
+      "type": "folk_religious",
+      "images": ["/assets/images/scenic/zhaoling.jpg"],
+      "map_image": "/assets/images/route_maps/zhaoling_map.png",
+      "intro": "东里村开邨之宫，始建于明万历年间，1956年烧毁后重建，1982年扩建，宫内供奉武安尊王，配奉老祖天师、三代祖师等神灵。建筑面积约600平方米，为闽南传统宫庙建筑。",
+      "story": "昭灵宫又名\"镇口宫\"，位于村西北水口处，是村民祭祀祈福的重要场所。每年春节全村巡境祈福，每三年一次大迎香火，农历六月十七日武安尊王生日时，村民齐聚宫中祭拜，场面隆重。宫内存有明代古钟、清代牌匾等文物。",
+      "audio_url": "/assets/audio/scenic_006.mp3",
+      "can_bookmark": true,
+      "location": "东里村西北水口处"
+    },
+    {
+      "id": "scenic_007",
+      "name": "后门坑露营基地",
+      "local_name": "后门坑营地",
+      "type": "leisure",
+      "images": ["/assets/images/scenic/houmen.jpg"],
+      "map_image": "/assets/images/route_maps/houmen_map.png",
+      "intro": "位于后门坑生态农场内，可观赏云海、日出，配套露营设施、烧烤区、生态步道，是休闲度假与亲子游的理想选择。营地面积约100亩，可容纳50顶帐篷。",
+      "story": "后门坑原为生态农场，2018年开发露营项目，依托高山生态资源，打造\"星空露营+农耕体验\"特色产品。周边种植百香果、黄金果等水果，游客可采摘品尝，夜晚可观赏星空云海，体验乡村静谧生活。",
+      "audio_url": "/assets/audio/scenic_007.mp3",
+      "can_bookmark": true,
+      "location": "东里村后门坑生态农场内"
+    },
+    {
+      "id": "scenic_008",
+      "name": "东里水库",
+      "local_name": "东里水库",
+      "type": "natural_engineering",
+      "images": ["/assets/images/scenic/shuiku.jpg"],
+      "map_image": "/assets/images/route_maps/shuiku_map.png",
+      "intro": "始建于1969年，1972年完工，由仙夹公社8个村劳动力献工献劳建成，用于农业灌溉，库容充足，周边山林环绕，景色优美。水库水面面积约120亩，灌溉农田800多亩。",
+      "story": "东里水库是东里村农业发展的重要基础设施，建设时村民无偿捐献农田山地，体现了团结协作的精神。水库周边植被茂密，水质清澈，是鸟类栖息地，近年来新增环湖步道，成为村民休闲散步的好去处，也是摄影爱好者拍摄湖光山色的绝佳点位。",
+      "audio_url": "/assets/audio/scenic_008.mp3",
+      "can_bookmark": true,
+      "location": "东里村北部山区"
+    }
+  ]
+}

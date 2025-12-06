@@ -1,0 +1,443 @@
+import { AgentID, ANPMessage, SharedContext } from '../types';
+import * as geminiService from './geminiService';
+
+type MessageHandler = (msg: ANPMessage) => Promise<void>;
+
+// 错误类型定义
+interface AgentError {
+  code: string;
+  message: string;
+  timestamp: number;
+  retryable: boolean;
+}
+
+// 增强的AgentNetwork类
+class AgentNetwork {
+  private listeners: Record<string, MessageHandler> = {};
+  private sharedContext: SharedContext = {
+    userSession: { history: [], litSpots: [] },
+    systemStatus: { agentHealth: {}, pendingTasks: 0 }
+  };
+  private retryCount: Map<string, number> = new Map();
+  private maxRetries = 3;
+  private messageQueue: ANPMessage[] = [];
+  private isProcessing = false;
+
+  // 增强的注册方法 - 避免重复注册
+  register(agentId: AgentID, handler: MessageHandler) {
+    if (this.listeners[agentId]) {
+      console.warn(`[ANP] Agent ${agentId} already registered, skipping...`);
+      return;
+    }
+    
+    this.listeners[agentId] = handler;
+    this.sharedContext.systemStatus.agentHealth[agentId] = 'online';
+    console.log(`[ANP] Agent ${agentId} registered successfully`);
+    
+    // 启动健康检查
+    this.startHealthCheck(agentId);
+  }
+
+  // 注销方法
+  unregister(agentId: AgentID) {
+    delete this.listeners[agentId];
+    this.sharedContext.systemStatus.agentHealth[agentId] = 'offline';
+    console.log(`[ANP] Agent ${agentId} unregistered`);
+  }
+
+  // 增强的消息分发 - 带重试机制
+  async dispatch(msg: ANPMessage, retryAttempt = 0): Promise<boolean> {
+    try {
+      // 添加到队列
+      this.messageQueue.push(msg);
+      
+      if (!this.isProcessing) {
+        await this.processQueue();
+      }
+      
+      return true;
+    } catch (error: any) {
+      console.error(`[ANP] Dispatch failed for ${msg.id}:`, error);
+      
+      // 重试逻辑
+      if (retryAttempt < this.maxRetries && this.isRetryableError(error)) {
+        const retryKey = `${msg.source}_${msg.target}_${msg.type}`;
+        const currentRetries = this.retryCount.get(retryKey) || 0;
+        
+        if (currentRetries < this.maxRetries) {
+          this.retryCount.set(retryKey, currentRetries + 1);
+          const delay = Math.pow(2, currentRetries) * 1000; // 指数退避
+          
+          console.log(`[ANP] Retrying message ${msg.id} in ${delay}ms (attempt ${currentRetries + 1}/${this.maxRetries})`);
+          
+          setTimeout(() => {
+            this.dispatch(msg, currentRetries + 1);
+          }, delay);
+          
+          return false;
+        }
+      }
+      
+      // 发送错误消息
+      await this.sendErrorMessage(msg, error);
+      return false;
+    }
+  }
+
+  // 处理消息队列
+  private async processQueue(): Promise<void> {
+    if (this.isProcessing || this.messageQueue.length === 0) {
+      return;
+    }
+
+    this.isProcessing = true;
+    
+    while (this.messageQueue.length > 0) {
+      const msg = this.messageQueue.shift()!;
+      await this.processMessage(msg);
+    }
+    
+    this.isProcessing = false;
+  }
+
+  // 处理单个消息
+  private async processMessage(msg: ANPMessage): Promise<void> {
+    try {
+      console.log(`[ANP] Processing: ${msg.source} -> ${msg.target} (${msg.type})`);
+      
+      // 更新监控
+      this.monitor(msg);
+      
+      // 分发消息
+      if (msg.target === 'BROADCAST') {
+        const promises = Object.values(this.listeners).map(h => h(msg));
+        await Promise.allSettled(promises);
+      } else if (this.listeners[msg.target]) {
+        await this.listeners[msg.target](msg);
+      } else {
+        console.warn(`[ANP] No handler found for target: ${msg.target}`);
+      }
+    } catch (error: any) {
+      console.error(`[ANP] Message processing failed:`, error);
+      throw error;
+    }
+  }
+
+  // 判断错误是否可重试
+  private isRetryableError(error: any): boolean {
+    if (!error) return false;
+    
+    const retryableErrors = [
+      'NETWORK_ERROR',
+      'TIMEOUT',
+      'CONNECTION_REFUSED',
+      'SERVICE_UNAVAILABLE'
+    ];
+    
+    return retryableErrors.includes(error.code) || 
+           error.message.includes('timeout') ||
+           error.message.includes('network');
+  }
+
+  // 发送错误消息
+  private async sendErrorMessage(originalMsg: ANPMessage, error: any): Promise<void> {
+    const errorMsg: AgentError = {
+      code: error.code || 'UNKNOWN_ERROR',
+      message: error.message || 'Unknown error occurred',
+      timestamp: Date.now(),
+      retryable: this.isRetryableError(error)
+    };
+
+    Network.dispatch({
+      id: `err_${Date.now()}`,
+      timestamp: Date.now(),
+      source: 'SYSTEM' as AgentID,
+      target: originalMsg.source,
+      type: 'ERROR',
+      action: 'message_failed',
+      payload: errorMsg
+    });
+  }
+
+  // 健康检查
+  private startHealthCheck(agentId: AgentID): void {
+    setInterval(() => {
+      const health = this.sharedContext.systemStatus.agentHealth[agentId];
+      if (health === 'offline') {
+        console.warn(`[ANP] Agent ${agentId} is offline, attempting recovery...`);
+        // 可以在这里添加恢复逻辑
+      }
+    }, 30000); // 每30秒检查一次
+  }
+
+  // 原子性Context更新
+  private updateContext(updates: Partial<SharedContext>): void {
+    this.sharedContext = { ...this.sharedContext, ...updates };
+    console.log(`[ANP] Context updated:`, updates);
+  }
+
+  private monitor(msg: ANPMessage): void {
+    // 原子性更新Context
+    if (msg.type === 'EVENT' && msg.action === 'context_update') {
+      this.updateContext(msg.payload);
+    }
+    
+    // 记录用户查询
+    if (msg.source === 'USER' && msg.action === 'query') {
+      const text = msg.payload.text;
+      if (text && typeof text === 'string') {
+        this.sharedContext.userSession.history.push(text);
+        // 限制历史记录长度
+        if (this.sharedContext.userSession.history.length > 100) {
+          this.sharedContext.userSession.history = this.sharedContext.userSession.history.slice(-50);
+        }
+      }
+    }
+
+    // 更新待处理任务计数
+    if (msg.type === 'REQUEST') {
+      this.sharedContext.systemStatus.pendingTasks++;
+    }
+    if (msg.type === 'RESPONSE' || msg.type === 'ERROR') {
+      this.sharedContext.systemStatus.pendingTasks = Math.max(0, this.sharedContext.systemStatus.pendingTasks - 1);
+    }
+  }
+
+  // 获取Context - 添加深拷贝保护
+  getContext(): SharedContext {
+    return JSON.parse(JSON.stringify(this.sharedContext));
+  }
+
+  // 获取系统状态 - 用于调试
+  getSystemStatus() {
+    return {
+      agents: Object.keys(this.listeners),
+      health: this.sharedContext.systemStatus.agentHealth,
+      pendingTasks: this.sharedContext.systemStatus.pendingTasks,
+      queueLength: this.messageQueue.length,
+      isProcessing: this.isProcessing
+    };
+  }
+
+  // 清理资源
+  cleanup(): void {
+    this.listeners = {};
+    this.messageQueue = [];
+    this.isProcessing = false;
+    this.retryCount.clear();
+    console.log('[ANP] Network cleaned up');
+  }
+}
+
+export const Network = new AgentNetwork();
+
+// --- Agent B: Tool Runner (增强版) ---
+
+const tools = {
+  'voice_interaction': geminiService.voiceInteraction,
+  'object_recognition': geminiService.objectRecognition,
+  'get_shopping_info': geminiService.getShoppingInfo,
+  'get_related_knowledge': geminiService.getRelatedKnowledge,
+  'get_map': geminiService.getStaticMapImage
+};
+
+// 安全的工具调用包装器
+const safeToolCall = async (toolName: string, toolFunc: Function, ...params: any[]): Promise<any> => {
+  try {
+    console.log(`[ANP] Calling tool: ${toolName} with params:`, params);
+    
+    // 添加超时保护
+    const result = await Promise.race([
+      toolFunc(...params),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('TOOL_TIMEOUT')), 15000)
+      )
+    ]);
+
+    console.log(`[ANP] Tool ${toolName} completed successfully`);
+    return result;
+  } catch (error: any) {
+    console.error(`[ANP] Tool ${toolName} failed:`, error);
+    
+    // 标准化错误
+    const standardError = {
+      code: error.name || 'TOOL_ERROR',
+      message: error.message || 'Tool execution failed',
+      timestamp: Date.now()
+    };
+    
+    throw standardError;
+  }
+};
+
+Network.register('B', async (msg: ANPMessage) => {
+  if (msg.type === 'REQUEST' && msg.action === 'call_tool') {
+    const { toolName, params } = msg.payload;
+    
+    try {
+      const tool = tools[toolName as keyof typeof tools];
+      if (!tool) {
+        throw new Error(`Tool ${toolName} not found`);
+      }
+
+      // 使用安全调用包装器
+      const result = await safeToolCall(toolName, tool, ...params);
+
+      // 发送成功响应
+      Network.dispatch({
+        id: `resp_${Date.now()}`,
+        timestamp: Date.now(),
+        source: 'B',
+        target: msg.source,
+        type: 'RESPONSE',
+        action: 'tool_result',
+        payload: result
+      });
+
+      // 更新当前景点Context
+      if (params[0] && typeof params[0] === 'string') {
+        Network.dispatch({
+          id: `evt_${Date.now()}`,
+          timestamp: Date.now(),
+          source: 'B',
+          target: 'BROADCAST',
+          type: 'EVENT',
+          action: 'context_update',
+          payload: { userSession: { currentSpot: params[0] } }
+        });
+      }
+
+    } catch (error: any) {
+      console.error(`[ANP] Agent B tool execution failed:`, error);
+      
+      // 发送错误响应
+      Network.dispatch({
+        id: `err_${Date.now()}`,
+        timestamp: Date.now(),
+        source: 'B',
+        target: msg.source,
+        type: 'ERROR',
+        action: 'tool_failed',
+        payload: { 
+          code: error.code || 'TOOL_EXECUTION_ERROR',
+          message: error.message || 'Tool execution failed',
+          toolName,
+          timestamp: Date.now()
+        }
+      });
+    }
+  }
+});
+
+// --- Agent A: Facade (增强版) ---
+
+function parseIntent(text: string): { tool: string, isCommerce: boolean } {
+  const normalizedText = text.toLowerCase().trim();
+  
+  if (normalizedText.includes('买') || normalizedText.includes('吃') || normalizedText.includes('购')) {
+    return { tool: 'get_shopping_info', isCommerce: true };
+  }
+  if (normalizedText.includes('历史') || normalizedText.includes('知识') || normalizedText.includes('故事')) {
+    return { tool: 'get_related_knowledge', isCommerce: false };
+  }
+  if (normalizedText.includes('拍照') || normalizedText.includes('照片') || normalizedText.includes('识别')) {
+    return { tool: 'object_recognition', isCommerce: false };
+  }
+  
+  return { tool: 'voice_interaction', isCommerce: false };
+}
+
+export const AgentA = {
+  processUserRequest: async (text: string, contextSpot: string, mode: 'text' | 'photo' = 'text'): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const requestId = `req_${Date.now()}`;
+      let isResolved = false;
+      
+      // 设置超时保护 - 增加到30秒
+      const timeout = setTimeout(() => {
+        if (!isResolved) {
+          isResolved = true;
+          reject(new Error('REQUEST_TIMEOUT'));
+        }
+      },30000); // 30秒超时
+
+      const responseHandler = async (msg: ANPMessage) => {
+        // 精确匹配请求ID或者来自B的响应
+        if (msg.id === requestId || (msg.source === 'B' && msg.target === 'A' && (msg.type === 'RESPONSE' || msg.type === 'ERROR'))) {
+          if (!isResolved) {
+            isResolved = true;
+            clearTimeout(timeout);
+            
+            if (msg.type === 'ERROR') {
+              console.error(`[ANP] Agent A received error:`, msg.payload);
+              resolve({ 
+                text: "服务暂时不可用，请稍后再试。",
+                error: true 
+              });
+            } else {
+              console.log(`[ANP] Agent A received response:`, msg.payload);
+              resolve(msg.payload);
+            }
+          }
+        }
+      };
+
+      // 检查是否已注册，避免重复注册
+      const currentListeners = Network.getSystemStatus().agents;
+      if (!currentListeners.includes('A')) {
+        Network.register('A', responseHandler);
+        console.log(`[ANP] Agent A registered with handler`);
+      } else {
+        console.log(`[ANP] Agent A already registered, updating handler`);
+        // 强制更新处理器
+        Network.unregister('A');
+        Network.register('A', responseHandler);
+      }
+
+      // 解析意图和参数
+      let toolName = 'voice_interaction';
+      let params = [contextSpot, text];
+
+      if (mode === 'photo') {
+        toolName = 'object_recognition';
+        params = [contextSpot];
+      } else {
+        const intent = parseIntent(text);
+        if (intent.isCommerce) {
+          toolName = 'get_shopping_info';
+          params = ["118.205,25.235", contextSpot]; 
+        } else if (intent.tool === 'get_related_knowledge') {
+          toolName = 'get_related_knowledge';
+          params = [contextSpot];
+        }
+      }
+
+      // 发送请求到Agent B
+      const requestMsg: ANPMessage = {
+        id: requestId,
+        timestamp: Date.now(),
+        source: 'A',
+        target: 'B',
+        type: 'REQUEST',
+        action: 'call_tool',
+        payload: { toolName, params }
+      };
+
+      console.log(`[ANP] Agent A dispatching request:`, requestMsg);
+      
+      // 使用增强的dispatch方法
+      Network.dispatch(requestMsg).catch(reject);
+    });
+  }
+};
+
+// 导出调试工具
+export const debugNetwork = () => {
+  console.log('[ANP] System Status:', Network.getSystemStatus());
+  console.log('[ANP] Shared Context:', Network.getContext());
+};
+
+// 清理函数 - 用于组件卸载时
+export const cleanupNetwork = () => {
+  Network.cleanup();
+};
