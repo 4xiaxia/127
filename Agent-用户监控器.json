@@ -1,0 +1,656 @@
+{
+  "agent_id": "user_monitor",
+  "name": "用户监控器",
+  "version": "1.0.0",
+  "role": "用户行为监控和数据分析",
+  "description": "负责用户行为跟踪、交互记录、会话管理和数据分析",
+  
+  "capabilities": [
+    "用户识别",
+    "行为跟踪",
+    "交互记录",
+    "会话管理",
+    "行为分析",
+    "体验监控",
+    "成本监控",
+    "打卡管理",
+    "计费统计",
+    "全局放哨"
+  ],
+  
+  "interfaces": [
+    {
+      "name": "track_user_entry",
+      "description": "跟踪用户进入",
+      "parameters": {
+        "required": ["user_id", "entry_time", "entry_point"],
+        "optional": ["referrer", "device_info", "location"],
+        "schema": {
+          "user_id": { "type": "string", "description": "用户唯一标识" },
+          "entry_time": { "type": "string", "description": "进入时间" },
+          "entry_point": { "type": "string", "description": "进入页面/功能" },
+          "referrer": { "type": "string", "description": "来源页面" },
+          "device_info": { "type": "object", "description": "设备信息" },
+          "location": { "type": "object", "description": "地理位置" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "session_id": { "type": "string" },
+          "tracking_success": { "type": "boolean" },
+          "user_profile_updated": { "type": "boolean" }
+        }
+      }
+    },
+    {
+      "name": "record_interaction",
+      "description": "记录用户交互行为",
+      "parameters": {
+        "required": ["user_id", "session_id", "interaction_type", "interaction_data"],
+        "optional": ["context", "timestamp", "metadata"],
+        "schema": {
+          "user_id": { "type": "string", "description": "用户唯一标识" },
+          "session_id": { "type": "string", "description": "会话标识" },
+          "interaction_type": { "type": "string", "enum": ["click", "scroll", "input", "voice", "navigation", "search", "play", "pause"], "description": "交互类型" },
+          "interaction_data": { "type": "object", "description": "交互详细数据" },
+          "context": { "type": "object", "description": "交互上下文" },
+          "timestamp": { "type": "string", "description": "交互时间戳" },
+          "metadata": { "type": "object", "description": "额外元数据" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "record_id": { "type": "string" },
+          "record_success": { "type": "boolean" },
+          "processing_time": { "type": "number" }
+        }
+      }
+    },
+    {
+      "name": "analyze_behavior",
+      "description": "分析用户行为",
+      "parameters": {
+        "required": ["user_id", "analysis_type"],
+        "optional": ["time_range", "session_ids", "filters"],
+        "schema": {
+          "user_id": { "type": "string", "description": "用户标识" },
+          "analysis_type": { "type": "string", "enum": ["session_summary", "interaction_pattern", "preference_analysis", "experience_score"], "description": "分析类型" },
+          "time_range": { "type": "object", "description": "时间范围" },
+          "session_ids": { "type": "array", "description": "指定会话ID列表" },
+          "filters": { "type": "object", "description": "过滤条件" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "analysis_result": { "type": "object" },
+          "insights": { "type": "array" },
+          "recommendations": { "type": "array" },
+          "confidence_score": { "type": "number" }
+        }
+      }
+    },
+    {
+      "name": "track_user_cost",
+      "description": "跟踪用户成本消耗",
+      "parameters": {
+        "required": ["user_id", "cost_event"],
+        "optional": ["cost_amount", "cost_type", "session_context"],
+        "schema": {
+          "user_id": { "type": "string", "description": "用户唯一标识" },
+          "cost_event": { "type": "string", "enum": ["ai_query", "voice_synthesis", "image_process", "search_api", "data_storage"], "description": "成本事件类型" },
+          "cost_amount": { "type": "number", "description": "成本金额(元)" },
+          "cost_type": { "type": "string", "enum": ["api_call", "resource_usage", "storage", "bandwidth"], "description": "成本类型" },
+          "session_context": { "type": "object", "description": "会话上下文信息" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "tracking_id": { "type": "string" },
+          "total_user_cost": { "type": "number" },
+          "session_cost": { "type": "number" },
+          "cost_limit_warning": { "type": "boolean" }
+        }
+      }
+    },
+    {
+      "name": "record_check_in",
+      "description": "记录用户打卡信息",
+      "parameters": {
+        "required": ["user_id", "check_in_type", "location_id"],
+        "optional": ["check_in_data", "media_files", "success_status"],
+        "schema": {
+          "user_id": { "type": "string", "description": "用户唯一标识" },
+          "check_in_type": { "type": "string", "enum": ["scenic_spot", "red_culture", "village_figure", "audio_guide"], "description": "打卡类型" },
+          "location_id": { "type": "string", "description": "位置/内容ID" },
+          "check_in_data": { "type": "object", "description": "打卡详细数据" },
+          "media_files": { "type": "array", "description": "关联媒体文件" },
+          "success_status": { "type": "boolean", "description": "打卡是否成功" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "check_in_id": { "type": "string" },
+          "check_in_time": { "type": "string" },
+          "bookmark_generated": { "type": "boolean" },
+          "qr_code": { "type": "string" },
+          "total_check_ins": { "type": "number" }
+        }
+      }
+    },
+    {
+      "name": "generate_user_bill",
+      "description": "生成用户账单",
+      "parameters": {
+        "required": ["user_id", "billing_period"],
+        "optional": ["detailed_items", "discount_codes", "payment_method"],
+        "schema": {
+          "user_id": { "type": "string", "description": "用户唯一标识" },
+          "billing_period": { "type": "string", "enum": ["daily", "weekly", "monthly", "session"], "description": "计费周期" },
+          "detailed_items": { "type": "boolean", "description": "是否包含详细项目", "default": true },
+          "discount_codes": { "type": "array", "description": "折扣码" },
+          "payment_method": { "type": "string", "description": "支付方式" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "bill_id": { "type": "string" },
+          "total_amount": { "type": "number" },
+          "itemized_costs": { "type": "array" },
+          "discount_applied": { "type": "number" },
+          "final_amount": { "type": "number" },
+          "payment_due": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "get_user_center_data",
+      "description": "获取用户中心数据",
+      "parameters": {
+        "required": ["user_id"],
+        "optional": ["data_types", "time_range", "include_sensitive"],
+        "schema": {
+          "user_id": { "type": "string", "description": "用户唯一标识" },
+          "data_types": { "type": "array", "enum": ["profile", "costs", "check_ins", "interactions", "preferences"], "description": "数据类型" },
+          "time_range": { "type": "object", "description": "时间范围" },
+          "include_sensitive": { "type": "boolean", "description": "是否包含敏感信息", "default": false }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "user_profile": { "type": "object" },
+          "cost_summary": { "type": "object" },
+          "check_in_history": { "type": "array" },
+          "interaction_stats": { "type": "object" },
+          "preferences": { "type": "object" }
+        }
+      }
+    }
+  ],
+  
+  "user_tracking": {
+    "identification": {
+      "methods": ["uuid", "session_id", "device_fingerprint", "behavior_pattern"],
+      "anonymous_user_support": true,
+      "consent_required": true,
+      "data_minimization": true
+    },
+    "entry_tracking": {
+      "track_entry_points": [
+        "home_page",
+        "voice_interaction", 
+        "scenic_spots",
+        "red_culture",
+        "village_figures",
+        "events",
+        "media"
+      ],
+      "track_referrers": [
+        "direct_access",
+        "search_engine",
+        "social_media",
+        "external_link",
+        "bookmark"
+      ],
+      "track_timing": {
+        "page_load_time": true,
+        "first_interaction_time": true,
+        "session_duration": true,
+        "time_on_page": true
+      }
+    },
+    "behavior_tracking": {
+      "click_events": {
+        "enabled": true,
+        "track_elements": ["button", "link", "card", "image", "audio_player"],
+        "track_position": true,
+        "track_timestamp": true
+      },
+      "scroll_events": {
+        "enabled": true,
+        "track_depth": true,
+        "track_velocity": false,
+        "sample_rate": 0.1
+      },
+      "input_events": {
+        "enabled": true,
+        "track_text_input": true,
+        "track_voice_input": true,
+        "track_input_duration": true,
+        "track_corrections": true
+      },
+      "navigation_events": {
+        "enabled": true,
+        "track_page_changes": true,
+        "track_tab_switching": false,
+        "track_browser_back": true
+      },
+      "media_events": {
+        "enabled": true,
+        "track_audio_play": true,
+        "track_video_play": false,
+        "track_completion": true,
+        "track_quality": true
+      }
+    }
+  },
+  
+  "interaction_types": {
+    "voice_interaction": {
+      "name": "语音交互",
+      "events": [
+        {
+          "event": "voice_start",
+          "description": "开始语音输入",
+          "data": ["trigger_method", "device_permission", "audio_quality"]
+        },
+        {
+          "event": "voice_end", 
+          "description": "结束语音输入",
+          "data": ["duration", "audio_blob_size", "transcript"]
+        },
+        {
+          "event": "voice_success",
+          "description": "语音识别成功",
+          "data": ["transcript", "confidence", "processing_time"]
+        },
+        {
+          "event": "voice_error",
+          "description": "语音识别失败",
+          "data": ["error_code", "error_message", "retry_count"]
+        }
+      ]
+    },
+    "text_interaction": {
+      "name": "文字交互",
+      "events": [
+        {
+          "event": "text_input_start",
+          "description": "开始文字输入",
+          "data": ["input_method", "input_field", "cursor_position"]
+        },
+        {
+          "event": "text_input_change",
+          "description": "文字输入变化",
+          "data": ["text_length", "change_type", "time_since_last_change"]
+        },
+        {
+          "event": "text_submit",
+          "description": "提交文字输入",
+          "data": ["final_text", "input_duration", "corrections_count"]
+        }
+      ]
+    },
+    "navigation_interaction": {
+      "name": "导航交互",
+      "events": [
+        {
+          "event": "page_visit",
+          "description": "访问页面",
+          "data": ["page_name", "load_time", "previous_page"]
+        },
+        {
+          "event": "feature_access",
+          "description": "访问功能",
+          "data": ["feature_name", "access_method", "response_time"]
+        },
+        {
+          "event": "content_view",
+          "description": "查看内容",
+          "data": ["content_type", "content_id", "view_duration"]
+        }
+      ]
+    },
+    "media_interaction": {
+      "name": "媒体交互",
+      "events": [
+        {
+          "event": "audio_play",
+          "description": "播放音频",
+          "data": ["audio_id", "audio_type", "play_position"]
+        },
+        {
+          "event": "audio_pause",
+          "description": "暂停音频",
+          "data": ["audio_id", "pause_position", "play_duration"]
+        },
+        {
+          "event": "audio_complete",
+          "description": "音频播放完成",
+          "data": ["audio_id", "total_duration", "completion_rate"]
+        }
+      ]
+    }
+  },
+  
+  "message_handlers": [
+    {
+      "message_type": "USER_ENTRY_TRACK_REQUEST",
+      "handler": "handle_user_entry_tracking",
+      "response_type": "USER_ENTRY_TRACK_RESPONSE",
+      "description": "处理用户进入跟踪"
+    },
+    {
+      "message_type": "INTERACTION_RECORD_REQUEST",
+      "handler": "handle_interaction_recording",
+      "response_type": "INTERACTION_RECORD_RESPONSE",
+      "description": "处理交互记录"
+    },
+    {
+      "message_type": "BEHAVIOR_ANALYSIS_REQUEST",
+      "handler": "handle_behavior_analysis",
+      "response_type": "BEHAVIOR_ANALYSIS_RESPONSE",
+      "description": "处理行为分析"
+    },
+    {
+      "message_type": "SESSION_MANAGE_REQUEST",
+      "handler": "handle_session_management",
+      "response_type": "SESSION_MANAGE_RESPONSE",
+      "description": "处理会话管理"
+    },
+    {
+      "message_type": "COST_TRACK_REQUEST",
+      "handler": "handle_cost_tracking",
+      "response_type": "COST_TRACK_RESPONSE",
+      "description": "处理成本跟踪"
+    },
+    {
+      "message_type": "CHECK_IN_RECORD_REQUEST",
+      "handler": "handle_check_in_recording",
+      "response_type": "CHECK_IN_RECORD_RESPONSE",
+      "description": "处理打卡记录"
+    },
+    {
+      "message_type": "BILL_GENERATE_REQUEST",
+      "handler": "handle_bill_generation",
+      "response_type": "BILL_GENERATE_RESPONSE",
+      "description": "处理账单生成"
+    },
+    {
+      "message_type": "USER_CENTER_DATA_REQUEST",
+      "handler": "handle_user_center_data",
+      "response_type": "USER_CENTER_DATA_RESPONSE",
+      "description": "处理用户中心数据请求"
+    },
+    {
+      "message_type": "ABNORMAL_COST_ALERT",
+      "handler": "handle_abnormal_cost_alert",
+      "response_type": "ABNORMAL_COST_RESPONSE",
+      "description": "处理异常成本告警"
+    }
+  ],
+  
+  "configuration": {
+    "tracking": {
+      "anonymous_tracking": true,
+      "consent_required": true,
+      "data_retention_days": 90,
+      "sample_rate": 1.0,
+      "batch_processing": true,
+      "batch_size": 100,
+      "batch_interval": 30
+    },
+    "privacy": {
+      "data_anonymization": true,
+      "pii_detection": true,
+      "user_control": true,
+      "export capability": true,
+      "deletion_capability": true
+    },
+    "storage": {
+      "local_storage": true,
+      "cloud_sync": false,
+      "compression": true,
+      "encryption": false,
+      "max_storage_per_user": "10MB"
+    },
+    "analysis": {
+      "real_time_analysis": true,
+      "pattern_detection": true,
+      "preference_learning": true,
+      "experience_scoring": true,
+      "anomaly_detection": true
+    },
+    "cost_monitoring": {
+      "enabled": true,
+      "daily_budget_limit": 50.00,
+      "session_budget_limit": 10.00,
+      "abnormal_threshold": 20.00,
+      "alert_webhook": "https://api.day.app/p2CPtgzAMNGQCqQYEz86AV/{{cost-abnormal}}",
+      "billing_currency": "CNY",
+      "cost_events": [
+        {
+          "event": "ai_query",
+          "cost_per_unit": 0.25,
+          "unit": "request",
+          "description": "AI查询成本"
+        },
+        {
+          "event": "voice_synthesis",
+          "cost_per_unit": 0.15,
+          "unit": "request",
+          "description": "语音合成成本"
+        },
+        {
+          "event": "search_api",
+          "cost_per_unit": 0.03,
+          "unit": "search",
+          "description": "搜索API成本"
+        },
+        {
+          "event": "image_process",
+          "cost_per_unit": 0.10,
+          "unit": "image",
+          "description": "图像处理成本"
+        },
+        {
+          "event": "data_storage",
+          "cost_per_unit": 0.01,
+          "unit": "MB",
+          "description": "数据存储成本"
+        }
+      ]
+    },
+    "check_in_management": {
+      "enabled": true,
+      "bookmark_generation": true,
+      "qr_code_generation": true,
+      "check_in_types": [
+        {
+          "type": "scenic_spot",
+          "points": 10,
+          "badge_level": "bronze",
+          "description": "景点打卡"
+        },
+        {
+          "type": "red_culture",
+          "points": 15,
+          "badge_level": "silver",
+          "description": "红色文化打卡"
+        },
+        {
+          "type": "village_figure",
+          "points": 20,
+          "badge_level": "gold",
+          "description": "村镇人物打卡"
+        },
+        {
+          "type": "audio_guide",
+          "points": 5,
+          "badge_level": "basic",
+          "description": "语音导览打卡"
+        }
+      ],
+      "rewards": {
+        "points_per_check_in": true,
+        "badge_system": true,
+        "achievement_unlock": true,
+        "sharing_bonus": true
+      }
+    }
+  },
+  
+  "monitoring": {
+    "metrics": [
+      {
+        "name": "user_entry_rate",
+        "type": "counter",
+        "description": "用户进入频率",
+        "unit": "次/分钟"
+      },
+      {
+        "name": "interaction_frequency",
+        "type": "counter", 
+        "description": "交互频率",
+        "unit": "次/分钟"
+      },
+      {
+        "name": "session_duration",
+        "type": "timer",
+        "description": "会话持续时间",
+        "unit": "秒"
+      },
+      {
+        "name": "user_satisfaction_score",
+        "type": "score",
+        "description": "用户满意度评分",
+        "unit": "0-100"
+      },
+      {
+        "name": "data_collection_rate",
+        "type": "throughput",
+        "description": "数据收集速率",
+        "unit": "events/second"
+      }
+    ],
+    "health_checks": [
+      {
+        "name": "tracking_system_health",
+        "check": "verify_tracking_functionality",
+        "interval": 60000
+      },
+      {
+        "name": "data_storage_health",
+        "check": "verify_storage_accessibility",
+        "interval": 120000
+      },
+      {
+        "name": "privacy_compliance_check",
+        "check": "verify_privacy_settings",
+        "interval": 300000
+      }
+    ]
+  },
+  
+  "error_handling": {
+    "tracking_errors": [
+      {
+        "error": "USER_ID_MISSING",
+        "action": "generate_anonymous_id",
+        "log_warning": true
+      },
+      {
+        "error": "STORAGE_FULL",
+        "action": "cleanup_old_data",
+        "notify_user": false
+      },
+      {
+        "error": "CONSENT_DENIED",
+        "action": "disable_tracking",
+        "respect_privacy": true
+      }
+    ],
+    "analysis_errors": [
+      {
+        "error": "INSUFFICIENT_DATA",
+        "action": "provide_default_analysis",
+        "notify_user": false
+      },
+      {
+        "error": "ANALYSIS_TIMEOUT",
+        "action": "return_cached_result",
+        "retry_later": true
+      }
+    ]
+  },
+  
+  "dependencies": {
+    "internal": [
+      {
+        "service": "browser_storage",
+        "interface": "indexeddb_api",
+        "version": "2.0"
+      },
+      {
+        "service": "event_listener",
+        "interface": "dom_events",
+        "version": "1.0"
+      }
+    ],
+    "external": [
+      {
+        "service": "analytics_engine",
+        "interface": "behavior_analysis",
+        "version": "1.0",
+        "optional": true
+      }
+    ]
+  },
+  
+  "security": {
+    "data_protection": {
+      "encryption_at_rest": false,
+      "encryption_in_transit": true,
+      "access_logging": true,
+      "audit_trail": true
+    },
+    "privacy_compliance": {
+      "gdpr_compliant": true,
+      "data_minimization": true,
+      "purpose_limitation": true,
+      "retention_policy": true
+    },
+    "access_control": {
+      "user_consent_required": true,
+      "role_based_access": true,
+      "data_classification": true
+    }
+  },
+  
+  "extensibility": {
+    "tracking_interface": "standardized_event_tracking",
+    "analysis_plugins": [
+      "behavior_pattern_analyzer",
+      "preference_learner",
+      "experience_calculator"
+    ],
+    "hot_reload": true,
+    "custom_event_types": true
+  }
+}

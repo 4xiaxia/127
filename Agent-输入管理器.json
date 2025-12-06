@@ -1,0 +1,245 @@
+{
+  "agent_id": "input_manager",
+  "name": "输入管理器",
+  "version": "1.0.0",
+  "role": "用户输入检测和模式管理",
+  "description": "负责用户输入检测、模式切换和输入预处理",
+  
+  "capabilities": [
+    "文字输入检测",
+    "语音输入检测", 
+    "模式切换管理",
+    "输入预处理",
+    "防抖动处理",
+    "输入状态监控"
+  ],
+  
+  "interfaces": [
+    {
+      "name": "detect_text_input",
+      "description": "检测用户文字输入",
+      "parameters": {
+        "required": ["element_selector", "debounce_time"],
+        "optional": ["min_length", "max_length"],
+        "schema": {
+          "element_selector": { "type": "string", "description": "DOM选择器" },
+          "debounce_time": { "type": "number", "description": "防抖时间(ms)" },
+          "min_length": { "type": "number", "description": "最小输入长度", "default": 1 },
+          "max_length": { "type": "number", "description": "最大输入长度", "default": 1000 }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "text_content": { "type": "string" },
+          "timestamp": { "type": "string" },
+          "input_source": { "type": "string" },
+          "confidence": { "type": "number" }
+        }
+      }
+    },
+    {
+      "name": "detect_voice_input",
+      "description": "检测用户语音输入",
+      "parameters": {
+        "required": ["microphone_config", "language"],
+        "optional": ["confidence_threshold", "max_duration"],
+        "schema": {
+          "microphone_config": { "type": "object", "description": "麦克风配置" },
+          "language": { "type": "string", "description": "语言代码", "default": "zh-CN" },
+          "confidence_threshold": { "type": "number", "description": "置信度阈值", "default": 0.8 },
+          "max_duration": { "type": "number", "description": "最大录音时长(s)", "default": 30 }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "transcript": { "type": "string" },
+          "confidence": { "type": "number" },
+          "duration": { "type": "number" },
+          "timestamp": { "type": "string" },
+          "audio_blob": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "switch_input_mode",
+      "description": "切换输入模式",
+      "parameters": {
+        "required": ["target_mode"],
+        "optional": ["animation_config", "preserve_input"],
+        "schema": {
+          "target_mode": { "type": "string", "enum": ["text", "voice", "hybrid"], "description": "目标模式" },
+          "animation_config": { "type": "object", "description": "切换动画配置" },
+          "preserve_input": { "type": "boolean", "description": "是否保留当前输入", "default": false }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "success": { "type": "boolean" },
+          "current_mode": { "type": "string" },
+          "switch_time": { "type": "number" },
+          "preserved_input": { "type": "string" }
+        }
+      }
+    }
+  ],
+  
+  "message_handlers": [
+    {
+      "message_type": "INPUT_MODE_REQUEST",
+      "handler": "handle_mode_switch",
+      "response_type": "MODE_SWITCH_RESPONSE",
+      "description": "处理输入模式切换请求"
+    },
+    {
+      "message_type": "INPUT_STATUS_QUERY",
+      "handler": "handle_status_query", 
+      "response_type": "STATUS_REPORT",
+      "description": "处理输入状态查询"
+    },
+    {
+      "message_type": "INPUT_CONFIG_UPDATE",
+      "handler": "handle_config_update",
+      "response_type": "CONFIG_UPDATE_RESPONSE",
+      "description": "处理配置更新请求"
+    }
+  ],
+  
+  "configuration": {
+    "default_mode": "hybrid",
+    "debounce_time": 300,
+    "voice_config": {
+      "provider": "minimax",
+      "model": "speech-01",
+      "language": "zh-CN",
+      "confidence_threshold": 0.8,
+      "max_duration": 30
+    },
+    "text_config": {
+      "min_length": 1,
+      "max_length": 1000,
+      "auto_submit": false
+    },
+    "mode_switching": {
+      "animation_duration": 300,
+      "preserve_input": true,
+      "feedback_enabled": true
+    }
+  },
+  
+  "monitoring": {
+    "metrics": [
+      {
+        "name": "input_detection_rate",
+        "type": "counter",
+        "description": "输入检测次数",
+        "unit": "次/分钟"
+      },
+      {
+        "name": "mode_switch_frequency",
+        "type": "counter", 
+        "description": "模式切换频率",
+        "unit": "次/小时"
+      },
+      {
+        "name": "voice_recognition_success_rate",
+        "type": "percentage",
+        "description": "语音识别成功率",
+        "unit": "%"
+      },
+      {
+        "name": "input_processing_latency",
+        "type": "timer",
+        "description": "输入处理延迟",
+        "unit": "ms"
+      }
+    ],
+    "health_checks": [
+      {
+        "name": "microphone_accessibility",
+        "check": "check_microphone_permission",
+        "interval": 60000
+      },
+      {
+        "name": "voice_service_availability",
+        "check": "check_voice_service_health",
+        "interval": 30000
+      }
+    ]
+  },
+  
+  "error_handling": {
+    "voice_recognition_errors": [
+      {
+        "error": "NO_SPEECH_DETECTED",
+        "action": "retry_with_prompt",
+        "max_retries": 3
+      },
+      {
+        "error": "NETWORK_ERROR", 
+        "action": "fallback_to_text_mode",
+        "notify_user": true
+      },
+      {
+        "error": "PERMISSION_DENIED",
+        "action": "request_permission_again",
+        "show_instructions": true
+      }
+    ],
+    "text_input_errors": [
+      {
+        "error": "INPUT_TOO_LONG",
+        "action": "truncate_input",
+        "notify_user": true
+      },
+      {
+        "error": "INVALID_CHARS",
+        "action": "sanitize_input",
+        "log_error": false
+      }
+    ]
+  },
+  
+  "dependencies": {
+    "internal": [
+      {
+        "service": "minimax_stt",
+        "interface": "speech_to_text",
+        "version": "1.0"
+      }
+    ],
+    "external": [
+      {
+        "service": "browser_api",
+        "interface": "webkitSpeechRecognition",
+        "fallback": true
+      }
+    ]
+  },
+  
+  "security": {
+    "input_sanitization": true,
+    "max_input_size": 10000,
+    "rate_limiting": {
+      "max_inputs_per_minute": 60,
+      "max_voice_per_minute": 10
+    },
+    "privacy": {
+      "no_audio_storage": true,
+      "temporary_processing": true,
+      "user_consent": true
+    }
+  },
+  
+  "extensibility": {
+    "plugin_interface": "input_handler",
+    "supported_plugins": [
+      "custom_input_validator",
+      "advanced_voice_processor", 
+      "multilingual_detector"
+    ],
+    "hot_reload": true
+  }
+}

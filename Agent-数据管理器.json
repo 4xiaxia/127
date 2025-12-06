@@ -1,0 +1,405 @@
+{
+  "agent_id": "data_manager",
+  "name": "数据管理器",
+  "version": "1.0.0",
+  "role": "数据存储、查询和缓存管理",
+  "description": "负责数据存储、快速查询、缓存管理和数据完整性保障",
+  
+  "capabilities": [
+    "数据存储",
+    "快速查询",
+    "缓存管理",
+    "数据完整性检查",
+    "索引优化",
+    "数据同步"
+  ],
+  
+  "interfaces": [
+    {
+      "name": "query_data",
+      "description": "查询数据",
+      "parameters": {
+        "required": ["query_type", "search_terms"],
+        "optional": ["filters", "sort_by", "limit", "offset"],
+        "schema": {
+          "query_type": { "type": "string", "enum": ["exact", "fuzzy", "semantic"], "description": "查询类型" },
+          "search_terms": { "type": "array", "description": "搜索关键词" },
+          "filters": { "type": "object", "description": "过滤条件" },
+          "sort_by": { "type": "string", "description": "排序字段", "default": "relevance" },
+          "limit": { "type": "number", "description": "返回数量限制", "default": 10 },
+          "offset": { "type": "number", "description": "偏移量", "default": 0 }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "results": { "type": "array" },
+          "total_count": { "type": "number" },
+          "query_time": { "type": "number" },
+          "cache_hit": { "type": "boolean" },
+          "data_sources": { "type": "array" }
+        }
+      }
+    },
+    {
+      "name": "store_data",
+      "description": "存储数据",
+      "parameters": {
+        "required": ["data_type", "data_content"],
+        "optional": ["metadata", "overwrite", "index_immediately"],
+        "schema": {
+          "data_type": { "type": "string", "enum": ["red_culture", "scenic_spots", "village_figures", "events", "media"], "description": "数据类型" },
+          "data_content": { "type": "object", "description": "数据内容" },
+          "metadata": { "type": "object", "description": "元数据" },
+          "overwrite": { "type": "boolean", "description": "是否覆盖", "default": false },
+          "index_immediately": { "type": "boolean", "description": "是否立即索引", "default": true }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "success": { "type": "boolean" },
+          "data_id": { "type": "string" },
+          "store_time": { "type": "number" },
+          "index_status": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "manage_cache",
+      "description": "缓存管理",
+      "parameters": {
+        "required": ["operation"],
+        "optional": ["cache_key", "ttl", "max_size"],
+        "schema": {
+          "operation": { "type": "string", "enum": ["get", "set", "delete", "clear", "stats"], "description": "操作类型" },
+          "cache_key": { "type": "string", "description": "缓存键" },
+          "ttl": { "type": "number", "description": "生存时间(秒)" },
+          "max_size": { "type": "string", "description": "最大大小" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "success": { "type": "boolean" },
+          "cache_data": { "type": "any" },
+          "stats": { "type": "object" },
+          "operation_time": { "type": "number" }
+        }
+      }
+    }
+  ],
+  
+  "data_sources": {
+    "red_culture": {
+      "name": "红色文化数据",
+      "description": "东里村红色文化相关数据",
+      "record_count": 156,
+      "index_fields": ["title", "content", "category", "location", "historical_period"],
+      "search_fields": ["title", "content", "keywords"],
+      "update_frequency": "daily"
+    },
+    "scenic_spots": {
+      "name": "风景名胜数据",
+      "description": "东里村风景名胜信息",
+      "record_count": 234,
+      "index_fields": ["name", "description", "location", "features", "accessibility"],
+      "search_fields": ["name", "description", "tags"],
+      "update_frequency": "weekly"
+    },
+    "village_figures": {
+      "name": "村镇人物数据",
+      "description": "东里村历史人物信息",
+      "record_count": 89,
+      "index_fields": ["name", "biography", "achievements", "historical_period", "category"],
+      "search_fields": ["name", "biography", "keywords"],
+      "update_frequency": "monthly"
+    },
+    "events": {
+      "name": "活动公告数据",
+      "description": "村内活动和公告信息",
+      "record_count": 45,
+      "index_fields": ["title", "content", "event_date", "category", "priority"],
+      "search_fields": ["title", "content", "tags"],
+      "update_frequency": "real_time"
+    },
+    "media": {
+      "name": "自媒体数据",
+      "description": "相关自媒体文章和视频",
+      "record_count": 67,
+      "index_fields": ["title", "content", "platform", "publish_date", "author"],
+      "search_fields": ["title", "content", "tags"],
+      "update_frequency": "daily"
+    }
+  },
+  
+  "indexing": {
+    "strategy": "hybrid",
+    "primary_index": "full_text_search",
+    "secondary_indexes": [
+      {
+        "name": "semantic_index",
+        "type": "vector_embedding",
+        "dimension": 768,
+        "model": "text-embedding-ada-002"
+      },
+      {
+        "name": "category_index",
+        "type": "hash_index",
+        "fields": ["category", "tags", "location"]
+      },
+      {
+        "name": "time_index",
+        "type": "btree_index",
+        "fields": ["created_at", "updated_at", "event_date"]
+      }
+    ],
+    "index_optimization": {
+      "auto_rebuild": true,
+      "rebuild_interval": "weekly",
+      "fragmentation_threshold": 30,
+      "compression": true
+    }
+  },
+  
+  "cache_system": {
+    "levels": [
+      {
+        "name": "l1_cache",
+        "type": "memory",
+        "size": "50MB",
+        "ttl": 300,
+        "eviction_policy": "lru"
+      },
+      {
+        "name": "l2_cache",
+        "type": "disk",
+        "size": "500MB",
+        "ttl": 3600,
+        "eviction_policy": "lfu"
+      },
+      {
+        "name": "l3_cache",
+        "type": "distributed",
+        "size": "2GB",
+        "ttl": 86400,
+        "eviction_policy": "ttl_based"
+      }
+    ],
+    "cache_strategies": {
+      "query_cache": {
+        "enabled": true,
+        "key_pattern": "query:{query_type}:{hash(search_terms)}",
+        "ttl": 600
+      },
+      "result_cache": {
+        "enabled": true,
+        "key_pattern": "result:{data_id}:{version}",
+        "ttl": 1800
+      },
+      "metadata_cache": {
+        "enabled": true,
+        "key_pattern": "meta:{data_type}:{field}",
+        "ttl": 3600
+      }
+    }
+  },
+  
+  "message_handlers": [
+    {
+      "message_type": "DATA_QUERY_REQUEST",
+      "handler": "handle_data_query",
+      "response_type": "DATA_QUERY_RESPONSE",
+      "description": "处理数据查询请求"
+    },
+    {
+      "message_type": "DATA_STORE_REQUEST",
+      "handler": "handle_data_store",
+      "response_type": "DATA_STORE_RESPONSE",
+      "description": "处理数据存储请求"
+    },
+    {
+      "message_type": "CACHE_MANAGE_REQUEST",
+      "handler": "handle_cache_operation",
+      "response_type": "CACHE_MANAGE_RESPONSE",
+      "description": "处理缓存管理请求"
+    },
+    {
+      "message_type": "INDEX_UPDATE_REQUEST",
+      "handler": "handle_index_update",
+      "response_type": "INDEX_UPDATE_RESPONSE",
+      "description": "处理索引更新请求"
+    }
+  ],
+  
+  "configuration": {
+    "storage": {
+      "primary_storage": "indexeddb",
+      "backup_storage": "localstorage",
+      "max_storage_size": "1GB",
+      "compression": true,
+      "encryption": false
+    },
+    "querying": {
+      "default_query_type": "semantic",
+      "max_results": 50,
+      "query_timeout": 5000,
+      "fuzzy_threshold": 0.8,
+      "semantic_threshold": 0.7
+    },
+    "caching": {
+      "enabled": true,
+      "default_ttl": 1800,
+      "max_cache_size": "1GB",
+      "preload_common_queries": true,
+      "cache_warmup": true
+    },
+    "indexing": {
+      "auto_index": true,
+      "index_batch_size": 1000,
+      "rebuild_schedule": "0 2 * * * *",
+      "optimization_level": "medium"
+    }
+  },
+  
+  "monitoring": {
+    "metrics": [
+      {
+        "name": "query_response_time",
+        "type": "timer",
+        "description": "查询响应时间",
+        "unit": "ms"
+      },
+      {
+        "name": "cache_hit_rate",
+        "type": "percentage",
+        "description": "缓存命中率",
+        "unit": "%"
+      },
+      {
+        "name": "data_integrity_score",
+        "type": "score",
+        "description": "数据完整性评分",
+        "unit": "0-100"
+      },
+      {
+        "name": "index_size",
+        "type": "storage",
+        "description": "索引大小",
+        "unit": "MB"
+      },
+      {
+        "name": "storage_usage",
+        "type": "percentage",
+        "description": "存储使用率",
+        "unit": "%"
+      }
+    ],
+    "health_checks": [
+      {
+        "name": "data_integrity_check",
+        "check": "verify_data_checksums",
+        "interval": 3600000,
+        "description": "数据完整性检查"
+      },
+      {
+        "name": "index_health_check",
+        "check": "validate_index_structure",
+        "interval": 1800000,
+        "description": "索引健康检查"
+      },
+      {
+        "name": "cache_performance_check",
+        "check": "analyze_cache_performance",
+        "interval": 300000,
+        "description": "缓存性能检查"
+      }
+    ]
+  },
+  
+  "error_handling": {
+    "query_errors": [
+      {
+        "error": "INVALID_QUERY_SYNTAX",
+        "action": "parse_and_retry",
+        "max_retries": 2
+      },
+      {
+        "error": "DATA_NOT_FOUND",
+        "action": "suggest_alternatives",
+        "fallback_to_search": true
+      },
+      {
+        "error": "INDEX_CORRUPTED",
+        "action": "rebuild_index",
+        "use_backup": true
+      }
+    ],
+    "storage_errors": [
+      {
+        "error": "STORAGE_FULL",
+        "action": "cleanup_cache",
+        "emergency_clear": true
+      },
+      {
+        "error": "PERMISSION_DENIED",
+        "action": "request_permissions",
+        "fallback_to_memory": true
+      }
+    ],
+    "cache_errors": [
+      {
+        "error": "CACHE_CORRUPTED",
+        "action": "clear_and_rebuild",
+        "preserve_hot_data": true
+      }
+    ]
+  },
+  
+  "dependencies": {
+    "internal": [
+      {
+        "service": "browser_storage",
+        "interface": "indexeddb_api",
+        "version": "2.0"
+      }
+    ],
+    "external": [
+      {
+        "service": "search_engine",
+        "interface": "full_text_search",
+        "version": "1.0",
+        "optional": true
+      }
+    ]
+  },
+  
+  "security": {
+    "data_encryption": {
+      "enabled": false,
+      "algorithm": "AES-256",
+      "key_rotation": "monthly"
+    },
+    "access_control": {
+      "read_only_for_external": true,
+      "internal_write_access": true,
+      "audit_logging": true
+    },
+    "data_validation": {
+      "input_sanitization": true,
+      "schema_validation": true,
+      "size_limits": true
+    }
+  },
+  
+  "extensibility": {
+    "data_source_interface": "standardized_data_source",
+    "storage_plugins": [
+      "cloud_storage",
+      "distributed_cache",
+      "search_engine"
+    ],
+    "hot_reload": true,
+    "dynamic_schema": true
+  }
+}

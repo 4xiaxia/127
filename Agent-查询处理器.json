@@ -1,0 +1,493 @@
+{
+  "agent_id": "query_processor",
+  "name": "查询处理器",
+  "version": "1.0.0",
+  "role": "查询处理和答案生成",
+  "description": "负责用户查询处理、工具调用、AI推理和答案生成",
+  
+  "capabilities": [
+    "查询分析",
+    "工具调用",
+    "AI推理",
+    "答案生成",
+    "成本控制",
+    "结果缓存"
+  ],
+  
+  "interfaces": [
+    {
+      "name": "process_query",
+      "description": "处理用户查询",
+      "parameters": {
+        "required": ["query_text", "session_id"],
+        "optional": ["context", "user_preferences", "priority"],
+        "schema": {
+          "query_text": { "type": "string", "description": "查询内容" },
+          "session_id": { "type": "string", "description": "会话ID" },
+          "context": { "type": "object", "description": "查询上下文" },
+          "user_preferences": { "type": "object", "description": "用户偏好" },
+          "priority": { "type": "string", "enum": ["low", "normal", "high", "urgent"], "default": "normal" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "answer": { "type": "string" },
+          "confidence": { "type": "number" },
+          "data_sources": { "type": "array" },
+          "processing_time": { "type": "number" },
+          "cost": { "type": "number" },
+          "tools_used": { "type": "array" }
+        }
+      }
+    },
+    {
+      "name": "call_tool",
+      "description": "调用外部工具",
+      "parameters": {
+        "required": ["tool_name", "parameters"],
+        "optional": ["timeout", "retry_config", "fallback_options"],
+        "schema": {
+          "tool_name": { "type": "string", "description": "工具名称" },
+          "parameters": { "type": "object", "description": "工具参数" },
+          "timeout": { "type": "number", "description": "超时时间(ms)", "default": 5000 },
+          "retry_config": { "type": "object", "description": "重试配置" },
+          "fallback_options": { "type": "array", "description": "降级选项" }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "success": { "type": "boolean" },
+          "result": { "type": "object" },
+          "error": { "type": "string" },
+          "execution_time": { "type": "number" },
+          "cost": { "type": "number" },
+          "tool_version": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "register_plugin",
+      "description": "注册插件工具",
+      "parameters": {
+        "required": ["plugin_config"],
+        "optional": ["auto_enable", "priority"],
+        "schema": {
+          "plugin_config": { "type": "object", "description": "插件配置" },
+          "auto_enable": { "type": "boolean", "description": "是否自动启用", "default": true },
+          "priority": { "type": "number", "description": "优先级", "default": 100 }
+        }
+      },
+      "response": {
+        "format": "json",
+        "schema": {
+          "success": { "type": "boolean" },
+          "plugin_id": { "type": "string" },
+          "registration_time": { "type": "string" },
+          "status": { "type": "string" }
+        }
+      }
+    }
+  ],
+  
+  "tool_registry": {
+    "version": "1.0",
+    "tools": [
+      {
+        "id": "ai_reasoning",
+        "name": "AI推理工具",
+        "type": "internal",
+        "provider": "silicon_flow",
+        "version": "1.0.0",
+        "interface": {
+          "endpoint": "https://api.siliconflow.cn/v1/chat/completions",
+          "method": "POST",
+          "authentication": {
+            "type": "api_key",
+            "key": "sk-xwmofaucrbykmzwwtbdwannjoxzxhssbwcfeafxykkdoouwe"
+          },
+          "parameters": {
+            "required": ["model", "messages"],
+            "optional": ["temperature", "max_tokens", "stream"]
+          },
+          "response": {
+            "format": "json",
+            "schema": {
+              "choices": { "type": "array" },
+              "usage": { "type": "object" }
+            }
+          }
+        },
+        "cost": {
+          "per_request": 0.25,
+          "currency": "CNY",
+          "billing_unit": "per_1k_tokens"
+        },
+        "rate_limit": {
+          "requests_per_minute": 60,
+          "requests_per_hour": 1000
+        },
+        "fallback_providers": [
+          {
+            "name": "zhipuai",
+            "endpoint": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+            "priority": 2,
+            "cost": 0.30
+          }
+        ]
+      },
+      {
+        "id": "mcp_search",
+        "name": "MCP搜索工具",
+        "type": "mcp",
+        "provider": "multi_engine",
+        "version": "1.0.0",
+        "interface": {
+          "engines": [
+            {
+              "name": "baidu_search",
+              "endpoint": "https://www.baidu.com/s",
+              "priority": 1,
+              "cost": 0.01
+            },
+            {
+              "name": "sogou_search", 
+              "endpoint": "https://www.sogou.com/web",
+              "priority": 2,
+              "cost": 0.01
+            },
+            {
+              "name": "bing_search",
+              "endpoint": "https://api.bing.microsoft.com/v7.0/search",
+              "priority": 3,
+              "cost": 0.01
+            }
+          ]
+        },
+        "cost": {
+          "per_search": 0.03,
+          "currency": "CNY"
+        },
+        "rate_limit": {
+          "searches_per_minute": 30,
+          "searches_per_hour": 500
+        }
+      },
+      {
+        "id": "voice_synthesis",
+        "name": "语音合成工具",
+        "type": "external",
+        "provider": "minimax",
+        "version": "1.0.0",
+        "interface": {
+          "endpoint": "https://api.minimax.chat/v1/audio/speech",
+          "authentication": {
+            "type": "api_key",
+            "key": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "parameters": {
+            "required": ["model", "text", "voice"],
+            "optional": ["speed", "pitch", "format"]
+          }
+        },
+        "cost": {
+          "per_request": 0.15,
+          "currency": "CNY",
+          "billing_unit": "per_1k_characters"
+        },
+        "rate_limit": {
+          "requests_per_minute": 20,
+          "requests_per_hour": 200
+        }
+      }
+    ]
+  },
+  
+  "plugin_system": {
+    "interface_version": "1.0",
+    "plugin_types": [
+      "tool",
+      "filter", 
+      "processor",
+      "output_formatter"
+    ],
+    "plugin_api": {
+      "register": {
+        "method": "register_plugin",
+        "parameters": {
+          "name": { "type": "string", "required": true },
+          "version": { "type": "string", "required": true },
+          "type": { "type": "string", "enum": ["tool", "filter", "processor", "output_formatter"], "required": true },
+          "entry_point": { "type": "string", "required": true },
+          "permissions": { "type": "array", "required": true },
+          "dependencies": { "type": "array", "default": [] }
+        }
+      },
+      "execute": {
+        "method": "execute_plugin",
+        "parameters": {
+          "plugin_id": { "type": "string", "required": true },
+          "action": { "type": "string", "required": true },
+          "parameters": { "type": "object", "default": {} },
+          "context": { "type": "object", "default": {} }
+        }
+      },
+      "unregister": {
+        "method": "unregister_plugin",
+        "parameters": {
+          "plugin_id": { "type": "string", "required": true },
+          "cleanup": { "type": "boolean", "default": true }
+        }
+      }
+    },
+    "security": {
+      "permissions": [
+        "network_access",
+        "file_read", 
+        "file_write",
+        "system_info",
+        "user_data"
+      ],
+      "sandbox": {
+        "enabled": true,
+        "isolation_level": "strict",
+        "resource_limits": {
+          "memory": "128MB",
+          "cpu": "50%",
+          "disk": "10MB"
+        }
+      },
+      "code_signing": {
+        "required": true,
+        "trusted_sources": ["official", "community_verified"]
+      }
+    }
+  },
+  
+  "processing_pipeline": {
+    "steps": [
+      {
+        "name": "query_analysis",
+        "description": "查询意图分析",
+        "tools_used": ["ai_reasoning"],
+        "timeout": 2000,
+        "fallback": "rule_based_analysis"
+      },
+      {
+        "name": "data_retrieval",
+        "description": "数据检索",
+        "tools_used": ["data_manager"],
+        "timeout": 100,
+        "fallback": "direct_ai_processing"
+      },
+      {
+        "name": "tool_execution",
+        "description": "工具执行",
+        "tools_used": ["mcp_search", "custom_tools"],
+        "timeout": 5000,
+        "fallback": "cached_results"
+      },
+      {
+        "name": "answer_generation",
+        "description": "答案生成",
+        "tools_used": ["ai_reasoning"],
+        "timeout": 3000,
+        "fallback": "template_response"
+      }
+    ],
+    "parallel_execution": true,
+    "caching": {
+      "enabled": true,
+      "ttl": 300,
+      "max_size": "100MB"
+    }
+  },
+  
+  "message_handlers": [
+    {
+      "message_type": "QUERY_PROCESS_REQUEST",
+      "handler": "handle_query_processing",
+      "response_type": "QUERY_PROCESS_RESPONSE",
+      "description": "处理查询请求"
+    },
+    {
+      "message_type": "TOOL_CALL_REQUEST",
+      "handler": "handle_tool_call",
+      "response_type": "TOOL_CALL_RESPONSE", 
+      "description": "处理工具调用"
+    },
+    {
+      "message_type": "PLUGIN_REGISTER_REQUEST",
+      "handler": "handle_plugin_registration",
+      "response_type": "PLUGIN_REGISTER_RESPONSE",
+      "description": "处理插件注册"
+    },
+    {
+      "message_type": "COST_CONTROL_REQUEST",
+      "handler": "handle_cost_control",
+      "response_type": "COST_CONTROL_RESPONSE",
+      "description": "处理成本控制"
+    }
+  ],
+  
+  "configuration": {
+    "processing": {
+      "max_concurrent_queries": 10,
+      "default_timeout": 10000,
+      "retry_attempts": 3,
+      "retry_delay": 1000
+    },
+    "cost_control": {
+      "daily_budget": 10.00,
+      "cost_tracking": true,
+      "cost_alerts": true,
+      "auto_cost_optimization": true
+    },
+    "ai_config": {
+      "primary_provider": "silicon_flow",
+      "backup_provider": "zhipuai",
+      "model": "Qwen2.5-7B",
+      "temperature": 0.7,
+      "max_tokens": 2000
+    },
+    "plugin_config": {
+      "auto_load_plugins": true,
+      "plugin_directory": "./plugins",
+      "security_scan": true,
+      "update_check": true
+    }
+  },
+  
+  "monitoring": {
+    "metrics": [
+      {
+        "name": "query_processing_time",
+        "type": "timer",
+        "description": "查询处理时间",
+        "unit": "ms"
+      },
+      {
+        "name": "tool_call_success_rate",
+        "type": "percentage",
+        "description": "工具调用成功率",
+        "unit": "%"
+      },
+      {
+        "name": "ai_call_frequency",
+        "type": "counter",
+        "description": "AI调用频率",
+        "unit": "次/分钟"
+      },
+      {
+        "name": "cost_accumulation",
+        "type": "currency",
+        "description": "成本累计",
+        "unit": "CNY"
+      },
+      {
+        "name": "plugin_execution_count",
+        "type": "counter",
+        "description": "插件执行次数",
+        "unit": "次/小时"
+      }
+    ],
+    "health_checks": [
+      {
+        "name": "ai_service_availability",
+        "check": "check_ai_service_health",
+        "interval": 30000
+      },
+      {
+        "name": "tool_registry_integrity",
+        "check": "check_tool_registry",
+        "interval": 60000
+      },
+      {
+        "name": "plugin_system_health",
+        "check": "check_plugin_system",
+        "interval": 120000
+      }
+    ]
+  },
+  
+  "error_handling": {
+    "tool_call_errors": [
+      {
+        "error": "TIMEOUT",
+        "action": "retry_with_fallback",
+        "max_retries": 3
+      },
+      {
+        "error": "INVALID_PARAMETERS",
+        "action": "parameter_validation",
+        "notify_user": true
+      },
+      {
+        "error": "PROVIDER_UNAVAILABLE",
+        "action": "switch_provider",
+        "auto_failover": true
+      }
+    ],
+    "plugin_errors": [
+      {
+        "error": "PERMISSION_DENIED",
+        "action": "disable_plugin",
+        "log_error": true
+      },
+      {
+        "error": "PLUGIN_CRASH",
+        "action": "restart_plugin",
+        "isolate_error": true
+      }
+    ]
+  },
+  
+  "dependencies": {
+    "internal": [
+      {
+        "service": "data_manager",
+        "interface": "data_query",
+        "version": "1.0"
+      },
+      {
+        "service": "voice_synthesis",
+        "interface": "tts_service",
+        "version": "1.0"
+      }
+    ],
+    "external": [
+      {
+        "service": "silicon_flow_api",
+        "interface": "chat_completions",
+        "version": "v1"
+      },
+      {
+        "service": "minimax_api", 
+        "interface": "speech_synthesis",
+        "version": "v1"
+      }
+    ]
+  },
+  
+  "security": {
+    "input_validation": true,
+    "parameter_sanitization": true,
+    "plugin_sandbox": true,
+    "api_key_encryption": true,
+    "audit_logging": true
+  },
+  
+  "extensibility": {
+    "tool_interface": "standardized_tool_api",
+    "plugin_hot_reload": true,
+    "dynamic_tool_loading": true,
+    "custom_providers": true,
+    "extension_points": [
+      "pre_processing",
+      "tool_execution",
+      "post_processing",
+      "output_formatting"
+    ]
+  }
+}
