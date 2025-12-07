@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import AdminPanelRefactored from './components/AdminPanelRefactored';
 import AgentManager from './components/AgentManager';
+import LoginPage from './pages/LoginPage';
+import ChatPage from './pages/ChatPage';
+import CategoryHomePage from './pages/CategoryHomePage';
+import SpotListPage from './pages/SpotListPage';
+import SpotDetailPage from './pages/SpotDetailPage';
+import PersonalCenterPage from './pages/PersonalCenterPage';
 
 // 🏛️ 东里村智能导游系统 - 主应用组件
 // 军工品质，精准高效，极简实用
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [activeView, setActiveView] = useState<'admin' | 'agent'>('admin');
 
   return (
@@ -136,6 +143,25 @@ const App: React.FC = () => {
         </div>
       </div>
     </ConfigProvider>
+  );
+};
+
+import DemoPage from './pages/DemoPage';
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<DemoPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/home" element={<CategoryHomePage />} />
+        <Route path="/spots" element={<SpotListPage />} />
+        <Route path="/spot/:id" element={<SpotDetailPage />} />
+        <Route path="/profile" element={<PersonalCenterPage />} />
+        <Route path="/demo" element={<AppContent />} />
+      </Routes>
+    </Router>
   );
 };
 
