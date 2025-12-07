@@ -1,24 +1,60 @@
+```
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+*.js
+*.js.map
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+*.env.*
+
 # Logs
-logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# OS
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# Coverage
+coverage/
+htmlcov/
+*.coverage
+
+# Python (if present)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing
+.nyc_output/
+coverage/
+*.log
+
+# Distribution / packaging
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+```
